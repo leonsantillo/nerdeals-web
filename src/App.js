@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 
 // ============================================
-// CATEGORÍAS
+// CATEGORÍAS (TOP primero)
 // ============================================
 const categories = [
+  { id: 'top', name: 'TOP', emoji: '🔥', color: '#f97316' },
   { id: 'gaming', name: 'Gaming', emoji: '🎮', color: '#8b5cf6' },
   { id: 'pc', name: 'PC', emoji: '💻', color: '#3b82f6' },
   { id: 'mobile', name: 'Mobile', emoji: '📱', color: '#10b981' },
@@ -16,20 +17,20 @@ const categories = [
 ];
 
 // ============================================
-// OFERTAS POR CATEGORÍA
+// OFERTAS
 // ============================================
 const dealsData = [
   // GAMING
   { id: 1, name: "Mouse Inalámbrico Lightspeed", brand: "Logitech G502 X", image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=800&h=600&fit=crop", currentPrice: 89000, avgPrice: 145000, discount: 39, store: "mercadolibre", url: "#", stock: "low", category: "gaming" },
-  { id: 2, name: "NVIDIA RTX 4060 8GB GDDR6", brand: "ASUS Dual", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&h=600&fit=crop", currentPrice: 485000, avgPrice: 629000, discount: 23, store: "mercadolibre", url: "#", stock: "low", category: "gaming" },
+  { id: 2, name: "RTX 4060 8GB GDDR6", brand: "ASUS Dual", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&h=600&fit=crop", currentPrice: 485000, avgPrice: 629000, discount: 23, store: "mercadolibre", url: "#", stock: "available", category: "gaming" },
   { id: 3, name: "Teclado Mecánico RGB Hot-Swap", brand: "Redragon K530", image: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=800&h=600&fit=crop", currentPrice: 45900, avgPrice: 62000, discount: 26, store: "mercadolibre", url: "#", stock: "available", category: "gaming" },
   { id: 4, name: "Silla Gamer Ergonómica", brand: "Cougar Armor", image: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=800&h=600&fit=crop", currentPrice: 289000, avgPrice: 380000, discount: 24, store: "garbarino", url: "#", stock: "available", category: "gaming" },
-  { id: 5, name: "Gamepad Inalámbrico", brand: "Xbox Series X", image: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?w=800&h=600&fit=crop", currentPrice: 65000, avgPrice: 95000, discount: 32, store: "mercadolibre", url: "#", stock: "low", category: "gaming" },
+  { id: 5, name: "Gamepad Inalámbrico", brand: "Xbox Series", image: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?w=800&h=600&fit=crop", currentPrice: 65000, avgPrice: 95000, discount: 32, store: "mercadolibre", url: "#", stock: "low", category: "gaming" },
 
   // PC
   { id: 6, name: "Notebook 15.6\" Ryzen 5 16GB", brand: "Lenovo IdeaPad", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&h=600&fit=crop", currentPrice: 650000, avgPrice: 850000, discount: 24, store: "mercadolibre", url: "#", stock: "low", category: "pc" },
   { id: 7, name: "SSD NVMe 1TB Gen4", brand: "Samsung 990 PRO", image: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=800&h=600&fit=crop", currentPrice: 142000, avgPrice: 189000, discount: 25, store: "garbarino", url: "#", stock: "available", category: "pc" },
-  { id: 8, name: "Memoria RAM DDR5 32GB", brand: "Corsair Vengeance", image: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=800&h=600&fit=crop", currentPrice: 125000, avgPrice: 178000, discount: 30, store: "megatone", url: "#", stock: "available", category: "pc" },
+  { id: 8, name: "RAM DDR5 32GB 5600MHz", brand: "Corsair Vengeance", image: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=800&h=600&fit=crop", currentPrice: 125000, avgPrice: 178000, discount: 30, store: "megatone", url: "#", stock: "available", category: "pc" },
   { id: 9, name: "Procesador Ryzen 7 5800X", brand: "AMD", image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=800&h=600&fit=crop", currentPrice: 320000, avgPrice: 420000, discount: 24, store: "garbarino", url: "#", stock: "available", category: "pc" },
   { id: 10, name: "Monitor 27\" 144Hz IPS", brand: "LG UltraGear", image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&h=600&fit=crop", currentPrice: 289000, avgPrice: 385000, discount: 25, store: "mercadolibre", url: "#", stock: "low", category: "pc" },
 
@@ -52,14 +53,14 @@ const dealsData = [
   { id: 22, name: "Escritorio Elevable", brand: "Flexispot", image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&h=600&fit=crop", currentPrice: 420000, avgPrice: 580000, discount: 28, store: "mercadolibre", url: "#", stock: "available", category: "office" },
   { id: 23, name: "Luz LED para Monitor", brand: "BenQ ScreenBar", image: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&h=600&fit=crop", currentPrice: 95000, avgPrice: 130000, discount: 27, store: "mercadolibre", url: "#", stock: "available", category: "office" },
   { id: 24, name: "Hub USB-C 7 en 1", brand: "Anker", image: "https://images.unsplash.com/photo-1625723044792-44de16ccb4e9?w=800&h=600&fit=crop", currentPrice: 45000, avgPrice: 65000, discount: 31, store: "mercadolibre", url: "#", stock: "low", category: "office" },
-  { id: 25, name: "Silla Ergonómica Pro", brand: "Herman Miller", image: "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=800&h=600&fit=crop", currentPrice: 890000, avgPrice: 1200000, discount: 26, store: "mercadolibre", url: "#", stock: "available", category: "office" },
+  { id: 25, name: "Silla Ergonómica Mesh", brand: "Ergocit", image: "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=800&h=600&fit=crop", currentPrice: 290000, avgPrice: 400000, discount: 28, store: "mercadolibre", url: "#", stock: "available", category: "office" },
 
   // STREAMING
   { id: 26, name: "Fire TV Stick 4K Max", brand: "Amazon", image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800&h=600&fit=crop", currentPrice: 42000, avgPrice: 65000, discount: 35, store: "mercadolibre", url: "#", stock: "low", category: "streaming" },
-  { id: 27, name: "Smart TV 55\" 4K UHD", brand: "Samsung", image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800&h=600&fit=crop", currentPrice: 520000, avgPrice: 720000, discount: 28, store: "garbarino", url: "#", stock: "available", category: "streaming" },
+  { id: 27, name: "Smart TV 55\" 4K UHD", brand: "Samsung", image: "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800&h=600&fit=crop", currentPrice: 520000, avgPrice: 720000, discount: 28, store: "garbarino", url: "#", stock: "available", category: "streaming" },
   { id: 28, name: "Chromecast Google TV 4K", brand: "Google", image: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&h=600&fit=crop", currentPrice: 48000, avgPrice: 68000, discount: 29, store: "mercadolibre", url: "#", stock: "available", category: "streaming" },
   { id: 29, name: "Soundbar 2.1 Bluetooth", brand: "JBL Bar", image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&h=600&fit=crop", currentPrice: 180000, avgPrice: 250000, discount: 28, store: "megatone", url: "#", stock: "available", category: "streaming" },
-  { id: 30, name: "Proyector Full HD 1080p", brand: "Epson", image: "https://images.unsplash.com/photo-1626379953822-baec19c3accd?w=800&h=600&fit=crop", currentPrice: 450000, avgPrice: 620000, discount: 27, store: "mercadolibre", url: "#", stock: "low", category: "streaming" },
+  { id: 30, name: "Proyector Full HD", brand: "Epson", image: "https://images.unsplash.com/photo-1626379953822-baec19c3accd?w=800&h=600&fit=crop", currentPrice: 450000, avgPrice: 620000, discount: 27, store: "mercadolibre", url: "#", stock: "low", category: "streaming" },
 
   // AUDIO
   { id: 31, name: "Auriculares Noise Cancelling", brand: "Sony WH-1000XM5", image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&h=600&fit=crop", currentPrice: 380000, avgPrice: 520000, discount: 27, store: "garbarino", url: "#", stock: "low", category: "audio" },
@@ -84,44 +85,236 @@ const dealsData = [
 ];
 
 // ============================================
-// POTENCIADORES
-// ============================================
-const potenciadores = {
-  garbarino: { banco: "Galicia", descuento: "30% extra", dia: "Jueves", color: "#FF6B00" },
-  megatone: { banco: "Macro", descuento: "25% extra", dia: "Miércoles", color: "#003087" },
-};
-
-// ============================================
-// CONFIG
+// STORES CONFIG
 // ============================================
 const stores = {
-  mercadolibre: { name: "Mercado Libre", color: "#FFE600", text: "#000" },
-  garbarino: { name: "Garbarino", color: "#E31837", text: "#FFF" },
-  megatone: { name: "Megatone", color: "#0066CC", text: "#FFF" },
+  mercadolibre: { name: "Mercado Libre", short: "MELI", color: "#FFE600", text: "#000" },
+  garbarino: { name: "Garbarino", short: "GARBA", color: "#E31837", text: "#FFF" },
+  megatone: { name: "Megatone", short: "MEGA", color: "#0066CC", text: "#FFF" },
 };
 
+// ============================================
+// UTILS
+// ============================================
 const formatPrice = (p) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(p);
+
+const getScore = (discount) => Math.min((discount / 40 * 10), 10).toFixed(1);
+
+const getScoreLabel = (discount) => {
+  if (discount >= 35) return { label: 'ÉPICA', color: '#f97316' };
+  if (discount >= 28) return { label: 'MUY BUENA', color: '#22c55e' };
+  if (discount >= 20) return { label: 'BUENA', color: '#3b82f6' };
+  return { label: 'OK', color: '#6b7280' };
+};
+
+// ============================================
+// DEAL CARD COMPONENT
+// ============================================
+const DealCard = ({ deal, isPreview = false }) => {
+  const store = stores[deal.store] || { name: deal.store, short: deal.store, color: '#666', text: '#fff' };
+  const score = getScore(deal.discount);
+  const scoreInfo = getScoreLabel(deal.discount);
+  const savings = deal.avgPrice - deal.currentPrice;
+
+  if (isPreview) {
+    return (
+      <div style={{
+        width: '100%',
+        height: '100%',
+        background: '#0a0a0a',
+        borderRadius: '12px',
+        border: '1px solid #222',
+        overflow: 'hidden',
+        opacity: 0.6,
+        display: 'flex',
+        flexDirection: 'column',
+      }}>
+        <div style={{ flex: 1, background: '#111', overflow: 'hidden' }}>
+          <img src={deal.image} alt={deal.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
+        </div>
+        <div style={{ padding: '10px' }}>
+          <p style={{ fontSize: '11px', color: '#6b7280', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{deal.brand}</p>
+          <p style={{ fontSize: '13px', color: '#999', margin: '4px 0 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{deal.name}</p>
+          <p style={{ fontSize: '15px', fontWeight: 'bold', color: '#fff', margin: '6px 0 0 0' }}>{formatPrice(deal.currentPrice)}</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div style={{
+      width: '100%',
+      maxWidth: '400px',
+      background: deal.discount >= 35 
+        ? 'linear-gradient(180deg, #1a0f00 0%, #0a0500 100%)' 
+        : 'linear-gradient(180deg, #0f0f0f 0%, #050505 100%)',
+      borderRadius: '20px',
+      border: deal.discount >= 35 ? '2px solid #f97316' : '1px solid #222',
+      overflow: 'hidden',
+      display: 'flex',
+      flexDirection: 'column',
+    }}>
+      {/* Image Section */}
+      <div style={{
+        position: 'relative',
+        height: '180px',
+        overflow: 'hidden',
+        background: '#111',
+      }}>
+        <img src={deal.image} alt={deal.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        
+        {/* Gradient */}
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%', background: 'linear-gradient(to top, #000, transparent)' }} />
+        
+        {/* Score Badge */}
+        <div style={{
+          position: 'absolute',
+          top: '10px', left: '10px',
+          background: 'rgba(0,0,0,0.85)',
+          padding: '6px 10px',
+          borderRadius: '8px',
+          border: `1px solid ${scoreInfo.color}`,
+        }}>
+          <div style={{ fontSize: '16px', fontWeight: 'bold', color: scoreInfo.color, lineHeight: 1 }}>
+            {score}<span style={{ fontSize: '11px' }}>/10</span>
+          </div>
+          <div style={{ fontSize: '8px', fontWeight: '700', color: scoreInfo.color, letterSpacing: '0.5px' }}>
+            {scoreInfo.label}
+          </div>
+        </div>
+
+        {/* Discount Badge */}
+        <div style={{
+          position: 'absolute',
+          top: '10px', right: '10px',
+          background: deal.discount >= 35 ? '#f97316' : '#22c55e',
+          color: '#000',
+          padding: '6px 12px',
+          borderRadius: '8px',
+          fontWeight: 'bold',
+          fontSize: '16px',
+        }}>-{deal.discount}%</div>
+
+        {/* Store Badge */}
+        <div style={{
+          position: 'absolute',
+          bottom: '10px', left: '10px',
+          background: store.color,
+          color: store.text,
+          padding: '4px 10px',
+          borderRadius: '6px',
+          fontWeight: 'bold',
+          fontSize: '10px',
+        }}>{store.short}</div>
+
+        {/* Stock Badge */}
+        {deal.stock === 'low' && (
+          <div style={{
+            position: 'absolute',
+            bottom: '10px', right: '10px',
+            background: 'rgba(251,191,36,0.2)',
+            color: '#fbbf24',
+            padding: '4px 10px',
+            borderRadius: '6px',
+            fontSize: '10px',
+            fontWeight: '600',
+            border: '1px solid rgba(251,191,36,0.3)',
+          }}>⚡ Pocas unidades</div>
+        )}
+      </div>
+
+      {/* Info Section */}
+      <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        {/* Brand & Name */}
+        <div>
+          <p style={{ color: '#4ade80', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', margin: 0 }}>{deal.brand}</p>
+          <h3 style={{ color: 'white', fontSize: '17px', fontWeight: '700', margin: '4px 0 0 0', lineHeight: 1.3 }}>{deal.name}</h3>
+        </div>
+
+        {/* Price */}
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
+          <span style={{ fontSize: '28px', fontWeight: 'bold', color: 'white' }}>{formatPrice(deal.currentPrice)}</span>
+          <span style={{ fontSize: '14px', color: '#6b7280', textDecoration: 'line-through' }}>{formatPrice(deal.avgPrice)}</span>
+        </div>
+
+        {/* Savings Box */}
+        <div style={{
+          background: 'rgba(34,197,94,0.1)',
+          border: '1px solid rgba(34,197,94,0.2)',
+          borderRadius: '10px',
+          padding: '12px',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+            <span style={{ fontSize: '12px', color: '#9ca3af' }}>💰 Ahorrás</span>
+            <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#22c55e' }}>{formatPrice(savings)}</span>
+          </div>
+          <div style={{ background: '#1a1a1a', borderRadius: '4px', height: '6px', overflow: 'hidden' }}>
+            <div style={{
+              height: '100%',
+              width: `${Math.min(deal.discount * 2.5, 100)}%`,
+              background: `linear-gradient(90deg, ${scoreInfo.color}, ${scoreInfo.color}aa)`,
+              borderRadius: '4px',
+            }} />
+          </div>
+          <p style={{ fontSize: '11px', color: '#6b7280', margin: '6px 0 0 0', textAlign: 'right' }}>
+            {deal.discount}% menos que el promedio
+          </p>
+        </div>
+
+        {/* CTA */}
+        <a href={deal.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
+          <button style={{
+            width: '100%',
+            padding: '16px',
+            borderRadius: '12px',
+            border: 'none',
+            background: 'linear-gradient(135deg, #22c55e, #06b6d4)',
+            color: '#000',
+            fontSize: '15px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+          }}>
+            Ver en {store.name} →
+          </button>
+        </a>
+      </div>
+    </div>
+  );
+};
 
 // ============================================
 // MAIN APP
 // ============================================
 export default function App() {
-  const [activeCategory, setActiveCategory] = useState('gaming');
+  const [activeCategory, setActiveCategory] = useState('top');
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [legalModal, setLegalModal] = useState(null);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
-  const [showMenu, setShowMenu] = useState(false);
-  const [legalModal, setLegalModal] = useState(null);
 
   // Get deals for current category
-  const categoryDeals = dealsData.filter(d => d.category === activeCategory);
-  const currentDeal = categoryDeals[currentIndex];
-  const totalDeals = categoryDeals.length;
+  const getDeals = () => {
+    if (activeCategory === 'top') {
+      return [...dealsData].sort((a, b) => b.discount - a.discount);
+    }
+    return dealsData.filter(d => d.category === activeCategory);
+  };
 
-  // Get category info
+  const deals = getDeals();
+  const currentDeal = deals[currentIndex];
+  const prevDeal = deals[currentIndex - 1];
+  const nextDeal = deals[currentIndex + 1];
   const category = categories.find(c => c.id === activeCategory);
 
-  // Handle category change
+  // Navigation
+  const goNext = () => currentIndex < deals.length - 1 && setCurrentIndex(currentIndex + 1);
+  const goPrev = () => currentIndex > 0 && setCurrentIndex(currentIndex - 1);
+
+  // Category change
   const changeCategory = (catId) => {
     setActiveCategory(catId);
     setCurrentIndex(0);
@@ -129,413 +322,191 @@ export default function App() {
 
   // Swipe handlers
   const minSwipeDistance = 50;
-
-  const onTouchStart = (e) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const onTouchMove = (e) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
+  const onTouchStart = (e) => { setTouchEnd(null); setTouchStart(e.targetTouches[0].clientX); };
+  const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
     const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-
-    if (isLeftSwipe && currentIndex < totalDeals - 1) {
-      setCurrentIndex(currentIndex + 1);
-    }
-    if (isRightSwipe && currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-    }
+    if (distance > minSwipeDistance) goNext();
+    if (distance < -minSwipeDistance) goPrev();
   };
 
-  // Keyboard navigation (for desktop)
+  // Keyboard
   useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (e.key === 'ArrowRight' && currentIndex < totalDeals - 1) {
-        setCurrentIndex(currentIndex + 1);
-      }
-      if (e.key === 'ArrowLeft' && currentIndex > 0) {
-        setCurrentIndex(currentIndex - 1);
-      }
+    const handleKey = (e) => {
+      if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'ArrowLeft') goPrev();
     };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentIndex, totalDeals]);
-
-  // Check if deal has potenciador
-  const potenciador = potenciadores[currentDeal?.store];
-  const store = stores[currentDeal?.store] || { name: currentDeal?.store, color: '#666', text: '#fff' };
-  const isHot = currentDeal?.discount >= 30;
-
-  // Navigation functions
-  const goNext = () => {
-    if (currentIndex < totalDeals - 1) setCurrentIndex(currentIndex + 1);
-  };
-  const goPrev = () => {
-    if (currentIndex > 0) setCurrentIndex(currentIndex - 1);
-  };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  });
 
   return (
     <div style={{
       minHeight: '100vh',
-      maxHeight: '100vh',
       background: '#000',
       color: 'white',
       fontFamily: 'system-ui, -apple-system, sans-serif',
       display: 'flex',
       flexDirection: 'column',
-      overflow: 'hidden',
-      position: 'relative',
     }}>
-
       {/* HEADER */}
       <header style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '12px 16px',
-        borderBottom: '1px solid #222',
-        background: '#000',
-        zIndex: 10,
+        borderBottom: '1px solid #1a1a1a',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <div style={{
-            width: '32px', height: '32px',
+            width: '36px', height: '36px',
             background: 'linear-gradient(135deg, #4ade80, #06b6d4)',
-            borderRadius: '8px',
+            borderRadius: '10px',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: '900', fontSize: '16px', color: '#000'
+            fontWeight: '900', fontSize: '18px', color: '#000'
           }}>N</div>
-          <span style={{ fontSize: '18px', fontWeight: 'bold' }}>
+          <span style={{ fontSize: '20px', fontWeight: 'bold' }}>
             Ner<span style={{ color: '#4ade80' }}>Deals</span>
           </span>
         </div>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <span style={{
-            background: '#111', padding: '6px 10px', borderRadius: '20px',
-            fontSize: '12px', color: '#4ade80'
-          }}>
-            🟢 {dealsData.length}
-          </span>
-          <button 
-            onClick={() => setShowMenu(!showMenu)}
-            style={{
-              background: '#111', border: 'none', padding: '8px 12px',
-              borderRadius: '20px', color: '#fff', cursor: 'pointer', fontSize: '14px'
-            }}
-          >☰</button>
-        </div>
+        <a href="https://cafecito.app/nerdeals" target="_blank" rel="noopener noreferrer" style={{
+          display: 'flex', alignItems: 'center', gap: '6px',
+          background: '#1a1a1a', padding: '8px 14px', borderRadius: '20px',
+          color: '#d4a574', fontSize: '13px', fontWeight: '600', textDecoration: 'none',
+        }}>☕ Apoyar</a>
       </header>
 
-      {/* MENU OVERLAY */}
-      {showMenu && (
-        <div style={{
-          position: 'absolute', top: '60px', right: '16px',
-          background: '#111', borderRadius: '12px', padding: '8px',
-          zIndex: 100, border: '1px solid #333',
-          display: 'flex', flexDirection: 'column', gap: '4px',
-        }}>
-          <a href="https://cafecito.app/nerdeals" target="_blank" rel="noopener noreferrer"
-            style={{ color: '#fff', textDecoration: 'none', padding: '10px 16px', borderRadius: '8px', fontSize: '14px' }}>
-            ☕ Cafecito
-          </a>
-          <a href="https://twitter.com/nerdeals" target="_blank" rel="noopener noreferrer"
-            style={{ color: '#fff', textDecoration: 'none', padding: '10px 16px', borderRadius: '8px', fontSize: '14px' }}>
-            🐦 Twitter
-          </a>
-          <a href="https://forms.gle/F9feFAC2i2f67BsN8" target="_blank" rel="noopener noreferrer"
-            style={{ color: '#fff', textDecoration: 'none', padding: '10px 16px', borderRadius: '8px', fontSize: '14px' }}>
-            💡 Sugerir deal
-          </a>
-        </div>
-      )}
-
-      {/* CATEGORY LABEL */}
+      {/* CATEGORIES */}
       <div style={{
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
-        padding: '12px', gap: '8px',
+        display: 'flex',
+        gap: '6px',
+        padding: '12px 16px',
+        overflowX: 'auto',
+        borderBottom: '1px solid #1a1a1a',
       }}>
-        <span style={{ fontSize: '24px' }}>{category?.emoji}</span>
-        <span style={{ 
-          fontSize: '18px', fontWeight: '600', 
-          color: category?.color,
-          textTransform: 'uppercase',
-          letterSpacing: '1px'
-        }}>{category?.name}</span>
+        {categories.map(cat => (
+          <button
+            key={cat.id}
+            onClick={() => changeCategory(cat.id)}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              padding: '8px 14px',
+              borderRadius: '20px',
+              border: activeCategory === cat.id ? `2px solid ${cat.color}` : '2px solid transparent',
+              background: activeCategory === cat.id ? `${cat.color}15` : '#111',
+              cursor: 'pointer',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s',
+            }}
+          >
+            <span style={{ fontSize: '16px' }}>{cat.emoji}</span>
+            <span style={{ fontSize: '13px', fontWeight: '600', color: activeCategory === cat.id ? cat.color : '#888' }}>{cat.name}</span>
+          </button>
+        ))}
       </div>
 
-      {/* MAIN CARD - SWIPEABLE */}
+      {/* CATEGORY TITLE + COUNTER */}
+      <div style={{ textAlign: 'center', padding: '16px 16px 8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+          <span style={{ fontSize: '24px' }}>{category?.emoji}</span>
+          <span style={{ fontSize: '20px', fontWeight: '700', color: category?.color }}>{category?.name}</span>
+        </div>
+        <p style={{ fontSize: '13px', color: '#666', margin: '6px 0 0 0' }}>
+          Oferta {currentIndex + 1} de {deals.length}
+        </p>
+      </div>
+
+      {/* MAIN CAROUSEL */}
       <div 
         style={{
           flex: 1,
           display: 'flex',
           alignItems: 'center',
-          padding: '0 16px',
+          justifyContent: 'center',
+          padding: '16px',
+          gap: '16px',
           overflow: 'hidden',
-          gap: '8px',
         }}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
       >
-        {/* LEFT ARROW */}
+        {/* Previous Preview - Desktop only */}
+        <div style={{
+          width: '140px',
+          height: '280px',
+          flexShrink: 0,
+          display: 'none',
+          '@media (min-width: 768px)': { display: 'block' },
+        }} className="desktop-only">
+          {prevDeal ? <DealCard deal={prevDeal} isPreview /> : <div style={{ width: '100%', height: '100%' }} />}
+        </div>
+
+        {/* Arrow Left */}
         <button
           onClick={goPrev}
           disabled={currentIndex === 0}
           style={{
-            width: '44px',
-            height: '44px',
+            width: '44px', height: '44px',
             borderRadius: '50%',
             border: 'none',
-            background: currentIndex === 0 ? '#1a1a1a' : '#222',
-            color: currentIndex === 0 ? '#444' : '#fff',
-            fontSize: '20px',
+            background: currentIndex === 0 ? '#111' : '#222',
+            color: currentIndex === 0 ? '#333' : '#fff',
+            fontSize: '18px',
             cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
             flexShrink: 0,
-            transition: 'all 0.2s',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >←</button>
 
-        {/* CARD */}
-        <div
-          style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            maxHeight: '100%',
-            overflow: 'hidden',
-          }}
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-        >
-        {currentDeal && (
-          <div style={{
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column',
-            background: isHot 
-              ? 'linear-gradient(180deg, #1a1000 0%, #0a0500 100%)' 
-              : 'linear-gradient(180deg, #111 0%, #050505 100%)',
-            borderRadius: '20px',
-            border: isHot ? '2px solid #f97316' : '1px solid #222',
-            overflow: 'hidden',
-            position: 'relative',
-          }}>
-
-            {/* IMAGE */}
-            <div style={{
-              flex: 1,
-              minHeight: '200px',
-              position: 'relative',
-              overflow: 'hidden',
-            }}>
-              <img 
-                src={currentDeal.image} 
-                alt={currentDeal.name}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
-              
-              {/* Gradient overlay */}
-              <div style={{
-                position: 'absolute',
-                bottom: 0, left: 0, right: 0,
-                height: '50%',
-                background: 'linear-gradient(to top, #000, transparent)',
-              }} />
-
-              {/* HOT Badge */}
-              {isHot && (
-                <div style={{
-                  position: 'absolute',
-                  top: '12px', left: '12px',
-                  background: 'linear-gradient(135deg, #f97316, #ea580c)',
-                  color: '#fff',
-                  padding: '6px 12px',
-                  borderRadius: '8px',
-                  fontWeight: 'bold',
-                  fontSize: '12px',
-                  display: 'flex', alignItems: 'center', gap: '4px',
-                }}>🔥 HOT DEAL</div>
-              )}
-
-              {/* Discount Badge */}
-              <div style={{
-                position: 'absolute',
-                top: '12px', right: '12px',
-                background: isHot ? '#f97316' : '#22c55e',
-                color: '#000',
-                padding: '8px 14px',
-                borderRadius: '10px',
-                fontWeight: 'bold',
-                fontSize: '18px',
-              }}>-{currentDeal.discount}%</div>
-
-              {/* Store Badge */}
-              <div style={{
-                position: 'absolute',
-                bottom: '12px', left: '12px',
-                background: store.color,
-                color: store.text,
-                padding: '6px 12px',
-                borderRadius: '8px',
-                fontWeight: 'bold',
-                fontSize: '11px',
-                textTransform: 'uppercase',
-              }}>{store.name}</div>
-
-              {/* Potenciador Badge */}
-              {potenciador && (
-                <div style={{
-                  position: 'absolute',
-                  bottom: '12px', right: '12px',
-                  background: `${potenciador.color}`,
-                  color: '#fff',
-                  padding: '6px 10px',
-                  borderRadius: '8px',
-                  fontSize: '10px',
-                  fontWeight: 'bold',
-                }}>
-                  +{potenciador.descuento} {potenciador.banco}
-                </div>
-              )}
-            </div>
-
-            {/* INFO */}
-            <div style={{ padding: '20px' }}>
-              {/* Brand */}
-              <p style={{
-                color: '#4ade80',
-                fontSize: '12px',
-                fontWeight: '600',
-                textTransform: 'uppercase',
-                margin: '0 0 4px 0',
-                letterSpacing: '0.5px',
-              }}>{currentDeal.brand}</p>
-
-              {/* Name */}
-              <h2 style={{
-                color: 'white',
-                fontSize: '20px',
-                fontWeight: '700',
-                margin: '0 0 16px 0',
-                lineHeight: 1.3,
-              }}>{currentDeal.name}</h2>
-
-              {/* Price */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'baseline',
-                gap: '12px',
-                marginBottom: '12px',
-              }}>
-                <span style={{
-                  fontSize: '32px',
-                  fontWeight: 'bold',
-                  color: 'white',
-                }}>{formatPrice(currentDeal.currentPrice)}</span>
-                <span style={{
-                  fontSize: '16px',
-                  color: '#6b7280',
-                  textDecoration: 'line-through',
-                }}>{formatPrice(currentDeal.avgPrice)}</span>
-              </div>
-
-              {/* Stock */}
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                marginBottom: '16px',
-              }}>
-                <span style={{
-                  width: '8px', height: '8px',
-                  borderRadius: '50%',
-                  background: currentDeal.stock === 'low' ? '#fbbf24' : '#22c55e',
-                }} />
-                <span style={{
-                  fontSize: '13px',
-                  color: currentDeal.stock === 'low' ? '#fbbf24' : '#22c55e',
-                }}>
-                  {currentDeal.stock === 'low' ? 'Pocas unidades' : 'Disponible'}
-                </span>
-              </div>
-
-              {/* CTA */}
-              <a 
-                href={currentDeal.url} 
-                target="_blank" 
-                rel="noopener noreferrer"
-                style={{ textDecoration: 'none' }}
-              >
-                <button style={{
-                  width: '100%',
-                  padding: '18px',
-                  borderRadius: '14px',
-                  border: 'none',
-                  background: 'linear-gradient(135deg, #22c55e, #06b6d4)',
-                  color: '#000',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: '8px',
-                }}>
-                  Ver en {store.name} →
-                </button>
-              </a>
-            </div>
-          </div>
-        )}
+        {/* Main Card */}
+        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', maxWidth: '400px' }}>
+          {currentDeal && <DealCard deal={currentDeal} />}
         </div>
 
-        {/* RIGHT ARROW */}
+        {/* Arrow Right */}
         <button
           onClick={goNext}
-          disabled={currentIndex === totalDeals - 1}
+          disabled={currentIndex === deals.length - 1}
           style={{
-            width: '44px',
-            height: '44px',
+            width: '44px', height: '44px',
             borderRadius: '50%',
             border: 'none',
-            background: currentIndex === totalDeals - 1 ? '#1a1a1a' : '#222',
-            color: currentIndex === totalDeals - 1 ? '#444' : '#fff',
-            fontSize: '20px',
-            cursor: currentIndex === totalDeals - 1 ? 'not-allowed' : 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
+            background: currentIndex === deals.length - 1 ? '#111' : '#222',
+            color: currentIndex === deals.length - 1 ? '#333' : '#fff',
+            fontSize: '18px',
+            cursor: currentIndex === deals.length - 1 ? 'not-allowed' : 'pointer',
             flexShrink: 0,
-            transition: 'all 0.2s',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}
         >→</button>
+
+        {/* Next Preview - Desktop only */}
+        <div style={{
+          width: '140px',
+          height: '280px',
+          flexShrink: 0,
+          display: 'none',
+        }} className="desktop-only">
+          {nextDeal ? <DealCard deal={nextDeal} isPreview /> : <div style={{ width: '100%', height: '100%' }} />}
+        </div>
       </div>
 
-      {/* DOTS INDICATOR */}
+      {/* DOTS */}
       <div style={{
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         gap: '6px',
-        padding: '12px 12px 8px',
+        padding: '8px 16px',
       }}>
-        {categoryDeals.map((_, i) => (
+        {deals.slice(0, 10).map((_, i) => (
           <button
             key={i}
             onClick={() => setCurrentIndex(i)}
             style={{
-              width: i === currentIndex ? '24px' : '8px',
+              width: i === currentIndex ? '20px' : '8px',
               height: '8px',
               borderRadius: '4px',
               background: i === currentIndex ? category?.color : '#333',
@@ -545,43 +516,9 @@ export default function App() {
             }}
           />
         ))}
-      </div>
-
-      {/* CATEGORY TABS */}
-      <div style={{
-        display: 'flex',
-        gap: '4px',
-        padding: '12px',
-        overflowX: 'auto',
-        borderTop: '1px solid #222',
-        background: '#000',
-      }}>
-        {categories.map(cat => (
-          <button
-            key={cat.id}
-            onClick={() => changeCategory(cat.id)}
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              padding: '10px 14px',
-              borderRadius: '12px',
-              border: activeCategory === cat.id ? `2px solid ${cat.color}` : '2px solid transparent',
-              background: activeCategory === cat.id ? `${cat.color}15` : 'transparent',
-              cursor: 'pointer',
-              minWidth: '60px',
-              transition: 'all 0.2s',
-            }}
-          >
-            <span style={{ fontSize: '20px' }}>{cat.emoji}</span>
-            <span style={{
-              fontSize: '10px',
-              fontWeight: '600',
-              color: activeCategory === cat.id ? cat.color : '#6b7280',
-            }}>{cat.name}</span>
-          </button>
-        ))}
+        {deals.length > 10 && (
+          <span style={{ fontSize: '11px', color: '#666', marginLeft: '4px' }}>+{deals.length - 10}</span>
+        )}
       </div>
 
       {/* FOOTER */}
@@ -589,173 +526,70 @@ export default function App() {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        gap: '16px',
-        padding: '12px 16px',
-        borderTop: '1px solid #222',
-        background: '#000',
         flexWrap: 'wrap',
+        gap: '16px',
+        padding: '16px',
+        borderTop: '1px solid #1a1a1a',
       }}>
-        <a 
-          href="https://cafecito.app/nerdeals" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '6px',
-            background: 'linear-gradient(135deg, #6f4e37, #8B4513)',
-            color: '#fff',
-            padding: '8px 14px',
-            borderRadius: '20px',
-            fontSize: '13px',
-            fontWeight: '600',
-            textDecoration: 'none',
-          }}
-        >☕ Cafecito</a>
-        <button 
-          onClick={() => setLegalModal('terminos')}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#6b7280',
-            fontSize: '12px',
-            cursor: 'pointer',
-          }}
-        >Términos</button>
-        <button 
-          onClick={() => setLegalModal('privacidad')}
-          style={{
-            background: 'none',
-            border: 'none',
-            color: '#6b7280',
-            fontSize: '12px',
-            cursor: 'pointer',
-          }}
-        >Privacidad</button>
-        <a 
-          href="https://twitter.com/nerdeals" 
-          target="_blank" 
-          rel="noopener noreferrer"
-          style={{
-            color: '#6b7280',
-            fontSize: '12px',
-            textDecoration: 'none',
-          }}
-        >Twitter</a>
+        <button onClick={() => setLegalModal('terminos')} style={{ background: 'none', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer' }}>Términos</button>
+        <button onClick={() => setLegalModal('privacidad')} style={{ background: 'none', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer' }}>Privacidad</button>
+        <a href="https://twitter.com/nerdeals" target="_blank" rel="noopener noreferrer" style={{ color: '#666', fontSize: '12px', textDecoration: 'none' }}>Twitter</a>
+        <a href="https://cafecito.app/nerdeals" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a574', fontSize: '12px', textDecoration: 'none' }}>☕ Cafecito</a>
       </footer>
 
       {/* LEGAL MODAL */}
       {legalModal && (
-        <div 
-          onClick={() => setLegalModal(null)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(0,0,0,0.9)',
-            zIndex: 200,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '16px',
-          }}
-        >
-          <div 
-            onClick={e => e.stopPropagation()}
-            style={{
-              background: '#111',
-              borderRadius: '16px',
-              maxWidth: '500px',
-              maxHeight: '80vh',
-              overflow: 'auto',
-              padding: '24px',
-              border: '1px solid #333',
-            }}
-          >
-            <div style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-              marginBottom: '20px',
-            }}>
-              <h2 style={{ 
-                fontSize: '20px', 
-                fontWeight: 'bold', 
-                margin: 0,
-                color: 'white',
-              }}>
+        <div onClick={() => setLegalModal(null)} style={{
+          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 100,
+          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
+        }}>
+          <div onClick={e => e.stopPropagation()} style={{
+            background: '#111', borderRadius: '16px', maxWidth: '500px', maxHeight: '80vh',
+            overflow: 'auto', padding: '24px', border: '1px solid #222',
+          }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ fontSize: '20px', fontWeight: 'bold', margin: 0 }}>
                 {legalModal === 'terminos' ? 'Términos y Condiciones' : 'Política de Privacidad'}
               </h2>
-              <button 
-                onClick={() => setLegalModal(null)}
-                style={{
-                  background: '#333',
-                  border: 'none',
-                  color: '#fff',
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '16px',
-                }}
-              >✕</button>
+              <button onClick={() => setLegalModal(null)} style={{
+                background: '#222', border: 'none', color: '#fff', width: '32px', height: '32px',
+                borderRadius: '8px', cursor: 'pointer', fontSize: '16px',
+              }}>✕</button>
             </div>
+            <p style={{ color: '#666', fontSize: '12px', marginBottom: '20px' }}>Última actualización: Enero 2025</p>
             
-            <p style={{ color: '#6b7280', fontSize: '12px', marginBottom: '20px' }}>
-              Última actualización: Enero 2025
-            </p>
-
             {legalModal === 'terminos' ? (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
                   <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>1. Sobre NerDeals</h4>
-                  <p style={{ color: '#9ca3af', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>
-                    NerDeals es un servicio independiente de curaduría de ofertas tecnológicas en Argentina. No vendemos productos ni intermediamos ventas.
-                  </p>
+                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals es un servicio de curaduría de ofertas tecnológicas en Argentina. No vendemos productos ni intermediamos ventas.</p>
                 </div>
                 <div>
                   <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>2. Enlaces de afiliados</h4>
-                  <p style={{ color: '#9ca3af', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>
-                    Participamos en programas de afiliados (Mercado Libre Partners, Amazon Associates). Los clicks pueden generar comisiones sin costo adicional para el usuario.
-                  </p>
+                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Participamos en programas de afiliados. Los clicks pueden generar comisiones sin costo adicional para vos.</p>
                 </div>
                 <div>
                   <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>3. Precios</h4>
-                  <p style={{ color: '#9ca3af', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>
-                    Los precios son referenciales y pueden cambiar sin previo aviso. Verificá siempre en el sitio del vendedor antes de comprar.
-                  </p>
+                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Los precios son referenciales y pueden cambiar. Verificá siempre en el sitio del vendedor.</p>
                 </div>
                 <div>
                   <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>4. Responsabilidad</h4>
-                  <p style={{ color: '#9ca3af', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>
-                    NerDeals no es responsable por transacciones realizadas en sitios de terceros, calidad de productos, envíos, garantías o reclamos.
-                  </p>
+                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>No somos responsables por transacciones con terceros, calidad de productos, envíos o reclamos.</p>
                 </div>
               </div>
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 <div>
                   <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>1. Datos recopilados</h4>
-                  <p style={{ color: '#9ca3af', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>
-                    Recopilamos información anónima de navegación para mejorar el servicio. No recopilamos datos personales sensibles.
-                  </p>
+                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Recopilamos información anónima de navegación para mejorar el servicio.</p>
                 </div>
                 <div>
                   <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>2. Cookies</h4>
-                  <p style={{ color: '#9ca3af', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>
-                    Usamos cookies para análisis y seguimiento de afiliados. Podés configurar tu navegador para rechazarlas.
-                  </p>
+                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Usamos cookies para análisis y seguimiento de afiliados.</p>
                 </div>
                 <div>
                   <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>3. Enlaces externos</h4>
-                  <p style={{ color: '#9ca3af', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>
-                    Los enlaces llevan a sitios de terceros con sus propias políticas de privacidad sobre las cuales no tenemos control.
-                  </p>
-                </div>
-                <div>
-                  <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>4. Contacto</h4>
-                  <p style={{ color: '#9ca3af', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>
-                    Para consultas sobre privacidad, contactanos a través de nuestras redes sociales.
-                  </p>
+                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Los enlaces llevan a sitios con sus propias políticas de privacidad.</p>
                 </div>
               </div>
             )}
@@ -763,6 +597,12 @@ export default function App() {
         </div>
       )}
 
+      {/* CSS for desktop preview */}
+      <style>{`
+        @media (min-width: 900px) {
+          .desktop-only { display: block !important; }
+        }
+      `}</style>
     </div>
   );
 }
