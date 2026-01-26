@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 // ============================================
 // CATEGORÍAS
@@ -21,67 +21,67 @@ const categories = [
 // ============================================
 const dealsData = [
   // GAMING
-  { id: 1, name: "Mouse Inalámbrico Lightspeed", brand: "Logitech G502 X", image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=800&h=600&fit=crop", currentPrice: 89000, avgPrice: 145000, discount: 39, store: "mercadolibre", url: "#", stock: "low", category: "gaming" },
-  { id: 2, name: "RTX 4060 8GB GDDR6", brand: "ASUS Dual", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&h=600&fit=crop", currentPrice: 485000, avgPrice: 629000, discount: 23, store: "mercadolibre", url: "#", stock: "available", category: "gaming" },
-  { id: 3, name: "Teclado Mecánico RGB Hot-Swap", brand: "Redragon K530", image: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=800&h=600&fit=crop", currentPrice: 45900, avgPrice: 62000, discount: 26, store: "mercadolibre", url: "#", stock: "available", category: "gaming" },
-  { id: 4, name: "Silla Gamer Ergonómica", brand: "Cougar Armor", image: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=800&h=600&fit=crop", currentPrice: 289000, avgPrice: 380000, discount: 24, store: "garbarino", url: "#", stock: "available", category: "gaming" },
-  { id: 5, name: "Gamepad Inalámbrico", brand: "Xbox Series", image: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?w=800&h=600&fit=crop", currentPrice: 65000, avgPrice: 95000, discount: 32, store: "mercadolibre", url: "#", stock: "low", category: "gaming" },
+  { id: 1, name: "Mouse Inalámbrico Lightspeed", brand: "Logitech G502 X", image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=800&h=600&fit=crop", currentPrice: 89000, avgPrice: 145000, discount: 39, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "gaming", publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+  { id: 2, name: "RTX 4060 8GB GDDR6", brand: "ASUS Dual", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&h=600&fit=crop", currentPrice: 485000, avgPrice: 629000, discount: 23, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "gaming", publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000) },
+  { id: 3, name: "Teclado Mecánico RGB Hot-Swap", brand: "Redragon K530", image: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=800&h=600&fit=crop", currentPrice: 45900, avgPrice: 62000, discount: 26, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "gaming", publishedAt: new Date(Date.now() - 8 * 60 * 60 * 1000) },
+  { id: 4, name: "Silla Gamer Ergonómica", brand: "Cougar Armor", image: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=800&h=600&fit=crop", currentPrice: 289000, avgPrice: 380000, discount: 24, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "gaming", publishedAt: new Date(Date.now() - 12 * 60 * 60 * 1000) },
+  { id: 5, name: "Gamepad Inalámbrico", brand: "Xbox Series", image: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?w=800&h=600&fit=crop", currentPrice: 65000, avgPrice: 95000, discount: 32, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "gaming", publishedAt: new Date(Date.now() - 3 * 60 * 60 * 1000) },
 
   // PC
-  { id: 6, name: "Notebook 15.6\" Ryzen 5 16GB", brand: "Lenovo IdeaPad", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&h=600&fit=crop", currentPrice: 650000, avgPrice: 850000, discount: 24, store: "mercadolibre", url: "#", stock: "low", category: "pc" },
-  { id: 7, name: "SSD NVMe 1TB Gen4", brand: "Samsung 990 PRO", image: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=800&h=600&fit=crop", currentPrice: 142000, avgPrice: 189000, discount: 25, store: "garbarino", url: "#", stock: "available", category: "pc" },
-  { id: 8, name: "RAM DDR5 32GB 5600MHz", brand: "Corsair Vengeance", image: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=800&h=600&fit=crop", currentPrice: 125000, avgPrice: 178000, discount: 30, store: "megatone", url: "#", stock: "available", category: "pc" },
-  { id: 9, name: "Procesador Ryzen 7 5800X", brand: "AMD", image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=800&h=600&fit=crop", currentPrice: 320000, avgPrice: 420000, discount: 24, store: "garbarino", url: "#", stock: "available", category: "pc" },
-  { id: 10, name: "Monitor 27\" 144Hz IPS", brand: "LG UltraGear", image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&h=600&fit=crop", currentPrice: 289000, avgPrice: 385000, discount: 25, store: "mercadolibre", url: "#", stock: "low", category: "pc" },
+  { id: 6, name: "Notebook 15.6\" Ryzen 5 16GB", brand: "Lenovo IdeaPad", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&h=600&fit=crop", currentPrice: 650000, avgPrice: 850000, discount: 24, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "pc", publishedAt: new Date(Date.now() - 1 * 60 * 60 * 1000) },
+  { id: 7, name: "SSD NVMe 1TB Gen4", brand: "Samsung 990 PRO", image: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=800&h=600&fit=crop", currentPrice: 142000, avgPrice: 189000, discount: 25, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "pc", publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000) },
+  { id: 8, name: "RAM DDR5 32GB 5600MHz", brand: "Corsair Vengeance", image: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=800&h=600&fit=crop", currentPrice: 125000, avgPrice: 178000, discount: 30, store: "megatone", url: "https://megatone.net", stock: "available", category: "pc", publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000) },
+  { id: 9, name: "Procesador Ryzen 7 5800X", brand: "AMD", image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=800&h=600&fit=crop", currentPrice: 320000, avgPrice: 420000, discount: 24, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "pc", publishedAt: new Date(Date.now() - 10 * 60 * 60 * 1000) },
+  { id: 10, name: "Monitor 27\" 144Hz IPS", brand: "LG UltraGear", image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&h=600&fit=crop", currentPrice: 289000, avgPrice: 385000, discount: 25, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "pc", publishedAt: new Date(Date.now() - 7 * 60 * 60 * 1000) },
 
   // MOBILE
-  { id: 11, name: "Galaxy S23 Ultra 256GB", brand: "Samsung", image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&h=600&fit=crop", currentPrice: 1200000, avgPrice: 1550000, discount: 23, store: "mercadolibre", url: "#", stock: "low", category: "mobile" },
-  { id: 12, name: "Cargador Inalámbrico 15W", brand: "Anker", image: "https://images.unsplash.com/photo-1622675272481-38a38c238cf1?w=800&h=600&fit=crop", currentPrice: 25000, avgPrice: 38000, discount: 34, store: "mercadolibre", url: "#", stock: "available", category: "mobile" },
-  { id: 13, name: "Redmi Note 13 Pro 256GB", brand: "Xiaomi", image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&h=600&fit=crop", currentPrice: 320000, avgPrice: 420000, discount: 24, store: "mercadolibre", url: "#", stock: "available", category: "mobile" },
-  { id: 14, name: "Power Bank 20000mAh 65W", brand: "Baseus", image: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800&h=600&fit=crop", currentPrice: 55000, avgPrice: 75000, discount: 27, store: "mercadolibre", url: "#", stock: "available", category: "mobile" },
-  { id: 15, name: "Moto G54 5G 256GB", brand: "Motorola", image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&h=600&fit=crop", currentPrice: 280000, avgPrice: 350000, discount: 20, store: "garbarino", url: "#", stock: "available", category: "mobile" },
+  { id: 11, name: "Galaxy S23 Ultra 256GB", brand: "Samsung", image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&h=600&fit=crop", currentPrice: 1200000, avgPrice: 1550000, discount: 23, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "mobile", publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+  { id: 12, name: "Cargador Inalámbrico 15W", brand: "Anker", image: "https://images.unsplash.com/photo-1622675272481-38a38c238cf1?w=800&h=600&fit=crop", currentPrice: 25000, avgPrice: 38000, discount: 34, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "mobile", publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000) },
+  { id: 13, name: "Redmi Note 13 Pro 256GB", brand: "Xiaomi", image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&h=600&fit=crop", currentPrice: 320000, avgPrice: 420000, discount: 24, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "mobile", publishedAt: new Date(Date.now() - 9 * 60 * 60 * 1000) },
+  { id: 14, name: "Power Bank 20000mAh 65W", brand: "Baseus", image: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800&h=600&fit=crop", currentPrice: 55000, avgPrice: 75000, discount: 27, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "mobile", publishedAt: new Date(Date.now() - 11 * 60 * 60 * 1000) },
+  { id: 15, name: "Moto G54 5G 256GB", brand: "Motorola", image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&h=600&fit=crop", currentPrice: 280000, avgPrice: 350000, discount: 20, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "mobile", publishedAt: new Date(Date.now() - 14 * 60 * 60 * 1000) },
 
   // APPLE
-  { id: 16, name: "AirPods Pro 2da Gen", brand: "Apple", image: "https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?w=800&h=600&fit=crop", currentPrice: 320000, avgPrice: 420000, discount: 24, store: "mercadolibre", url: "#", stock: "low", category: "apple" },
-  { id: 17, name: "iPad 10.9\" 64GB WiFi", brand: "Apple", image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800&h=600&fit=crop", currentPrice: 580000, avgPrice: 750000, discount: 23, store: "garbarino", url: "#", stock: "low", category: "apple" },
-  { id: 18, name: "Apple Watch Series 9", brand: "Apple", image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=800&h=600&fit=crop", currentPrice: 650000, avgPrice: 820000, discount: 21, store: "mercadolibre", url: "#", stock: "available", category: "apple" },
-  { id: 19, name: "Magic Keyboard Touch ID", brand: "Apple", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&h=600&fit=crop", currentPrice: 189000, avgPrice: 250000, discount: 24, store: "garbarino", url: "#", stock: "available", category: "apple" },
-  { id: 20, name: "Cable USB-C Lightning 2m", brand: "Apple Original", image: "https://images.unsplash.com/photo-1616410011236-7a42121dd981?w=800&h=600&fit=crop", currentPrice: 25000, avgPrice: 38000, discount: 34, store: "mercadolibre", url: "#", stock: "available", category: "apple" },
+  { id: 16, name: "AirPods Pro 2da Gen", brand: "Apple", image: "https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?w=800&h=600&fit=crop", currentPrice: 320000, avgPrice: 420000, discount: 24, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "apple", publishedAt: new Date(Date.now() - 3 * 60 * 60 * 1000) },
+  { id: 17, name: "iPad 10.9\" 64GB WiFi", brand: "Apple", image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800&h=600&fit=crop", currentPrice: 580000, avgPrice: 750000, discount: 23, store: "garbarino", url: "https://garbarino.com", stock: "low", category: "apple", publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000) },
+  { id: 18, name: "Apple Watch Series 9", brand: "Apple", image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=800&h=600&fit=crop", currentPrice: 650000, avgPrice: 820000, discount: 21, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "apple", publishedAt: new Date(Date.now() - 8 * 60 * 60 * 1000) },
+  { id: 19, name: "Magic Keyboard Touch ID", brand: "Apple", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&h=600&fit=crop", currentPrice: 189000, avgPrice: 250000, discount: 24, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "apple", publishedAt: new Date(Date.now() - 15 * 60 * 60 * 1000) },
+  { id: 20, name: "Cable USB-C Lightning 2m", brand: "Apple Original", image: "https://images.unsplash.com/photo-1616410011236-7a42121dd981?w=800&h=600&fit=crop", currentPrice: 25000, avgPrice: 38000, discount: 34, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "apple", publishedAt: new Date(Date.now() - 20 * 60 * 60 * 1000) },
 
   // OFFICE
-  { id: 21, name: "Webcam 4K Pro Streaming", brand: "Logitech Brio", image: "https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=800&h=600&fit=crop", currentPrice: 185000, avgPrice: 280000, discount: 34, store: "garbarino", url: "#", stock: "available", category: "office" },
-  { id: 22, name: "Escritorio Elevable", brand: "Flexispot", image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&h=600&fit=crop", currentPrice: 420000, avgPrice: 580000, discount: 28, store: "mercadolibre", url: "#", stock: "available", category: "office" },
-  { id: 23, name: "Luz LED para Monitor", brand: "BenQ ScreenBar", image: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&h=600&fit=crop", currentPrice: 95000, avgPrice: 130000, discount: 27, store: "mercadolibre", url: "#", stock: "available", category: "office" },
-  { id: 24, name: "Hub USB-C 7 en 1", brand: "Anker", image: "https://images.unsplash.com/photo-1625723044792-44de16ccb4e9?w=800&h=600&fit=crop", currentPrice: 45000, avgPrice: 65000, discount: 31, store: "mercadolibre", url: "#", stock: "low", category: "office" },
-  { id: 25, name: "Silla Ergonómica Mesh", brand: "Ergocit", image: "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=800&h=600&fit=crop", currentPrice: 290000, avgPrice: 400000, discount: 28, store: "mercadolibre", url: "#", stock: "available", category: "office" },
+  { id: 21, name: "Webcam 4K Pro Streaming", brand: "Logitech Brio", image: "https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=800&h=600&fit=crop", currentPrice: 185000, avgPrice: 280000, discount: 34, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "office", publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000) },
+  { id: 22, name: "Escritorio Elevable", brand: "Flexispot", image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&h=600&fit=crop", currentPrice: 420000, avgPrice: 580000, discount: 28, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "office", publishedAt: new Date(Date.now() - 7 * 60 * 60 * 1000) },
+  { id: 23, name: "Luz LED para Monitor", brand: "BenQ ScreenBar", image: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&h=600&fit=crop", currentPrice: 95000, avgPrice: 130000, discount: 27, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "office", publishedAt: new Date(Date.now() - 10 * 60 * 60 * 1000) },
+  { id: 24, name: "Hub USB-C 7 en 1", brand: "Anker", image: "https://images.unsplash.com/photo-1625723044792-44de16ccb4e9?w=800&h=600&fit=crop", currentPrice: 45000, avgPrice: 65000, discount: 31, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "office", publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+  { id: 25, name: "Silla Ergonómica Mesh", brand: "Ergocit", image: "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=800&h=600&fit=crop", currentPrice: 290000, avgPrice: 400000, discount: 28, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "office", publishedAt: new Date(Date.now() - 13 * 60 * 60 * 1000) },
 
   // STREAMING
-  { id: 26, name: "Fire TV Stick 4K Max", brand: "Amazon", image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800&h=600&fit=crop", currentPrice: 42000, avgPrice: 65000, discount: 35, store: "mercadolibre", url: "#", stock: "low", category: "streaming" },
-  { id: 27, name: "Smart TV 55\" 4K UHD", brand: "Samsung", image: "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800&h=600&fit=crop", currentPrice: 520000, avgPrice: 720000, discount: 28, store: "garbarino", url: "#", stock: "available", category: "streaming" },
-  { id: 28, name: "Chromecast Google TV 4K", brand: "Google", image: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&h=600&fit=crop", currentPrice: 48000, avgPrice: 68000, discount: 29, store: "mercadolibre", url: "#", stock: "available", category: "streaming" },
-  { id: 29, name: "Soundbar 2.1 Bluetooth", brand: "JBL Bar", image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&h=600&fit=crop", currentPrice: 180000, avgPrice: 250000, discount: 28, store: "megatone", url: "#", stock: "available", category: "streaming" },
-  { id: 30, name: "Proyector Full HD", brand: "Epson", image: "https://images.unsplash.com/photo-1626379953822-baec19c3accd?w=800&h=600&fit=crop", currentPrice: 450000, avgPrice: 620000, discount: 27, store: "mercadolibre", url: "#", stock: "low", category: "streaming" },
+  { id: 26, name: "Fire TV Stick 4K Max", brand: "Amazon", image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800&h=600&fit=crop", currentPrice: 42000, avgPrice: 65000, discount: 35, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "streaming", publishedAt: new Date(Date.now() - 1 * 60 * 60 * 1000) },
+  { id: 27, name: "Smart TV 55\" 4K UHD", brand: "Samsung", image: "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800&h=600&fit=crop", currentPrice: 520000, avgPrice: 720000, discount: 28, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "streaming", publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000) },
+  { id: 28, name: "Chromecast Google TV 4K", brand: "Google", image: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&h=600&fit=crop", currentPrice: 48000, avgPrice: 68000, discount: 29, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "streaming", publishedAt: new Date(Date.now() - 9 * 60 * 60 * 1000) },
+  { id: 29, name: "Soundbar 2.1 Bluetooth", brand: "JBL Bar", image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&h=600&fit=crop", currentPrice: 180000, avgPrice: 250000, discount: 28, store: "megatone", url: "https://megatone.net", stock: "available", category: "streaming", publishedAt: new Date(Date.now() - 12 * 60 * 60 * 1000) },
+  { id: 30, name: "Proyector Full HD", brand: "Epson", image: "https://images.unsplash.com/photo-1626379953822-baec19c3accd?w=800&h=600&fit=crop", currentPrice: 450000, avgPrice: 620000, discount: 27, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "streaming", publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000) },
 
   // AUDIO
-  { id: 31, name: "Auriculares Noise Cancelling", brand: "Sony WH-1000XM5", image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&h=600&fit=crop", currentPrice: 380000, avgPrice: 520000, discount: 27, store: "garbarino", url: "#", stock: "low", category: "audio" },
-  { id: 32, name: "Parlante Bluetooth", brand: "JBL Flip 6", image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800&h=600&fit=crop", currentPrice: 95000, avgPrice: 130000, discount: 27, store: "mercadolibre", url: "#", stock: "available", category: "audio" },
-  { id: 33, name: "Micrófono USB Streaming", brand: "Blue Yeti", image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&h=600&fit=crop", currentPrice: 185000, avgPrice: 250000, discount: 26, store: "mercadolibre", url: "#", stock: "available", category: "audio" },
-  { id: 34, name: "Auriculares Gaming 7.1", brand: "HyperX Cloud III", image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=800&h=600&fit=crop", currentPrice: 156000, avgPrice: 210000, discount: 26, store: "megatone", url: "#", stock: "available", category: "audio" },
-  { id: 35, name: "Earbuds True Wireless", brand: "Galaxy Buds2 Pro", image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=800&h=600&fit=crop", currentPrice: 85000, avgPrice: 120000, discount: 29, store: "mercadolibre", url: "#", stock: "available", category: "audio" },
+  { id: 31, name: "Auriculares Noise Cancelling", brand: "Sony WH-1000XM5", image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&h=600&fit=crop", currentPrice: 380000, avgPrice: 520000, discount: 27, store: "garbarino", url: "https://garbarino.com", stock: "low", category: "audio", publishedAt: new Date(Date.now() - 3 * 60 * 60 * 1000) },
+  { id: 32, name: "Parlante Bluetooth", brand: "JBL Flip 6", image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800&h=600&fit=crop", currentPrice: 95000, avgPrice: 130000, discount: 27, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "audio", publishedAt: new Date(Date.now() - 8 * 60 * 60 * 1000) },
+  { id: 33, name: "Micrófono USB Streaming", brand: "Blue Yeti", image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&h=600&fit=crop", currentPrice: 185000, avgPrice: 250000, discount: 26, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "audio", publishedAt: new Date(Date.now() - 11 * 60 * 60 * 1000) },
+  { id: 34, name: "Auriculares Gaming 7.1", brand: "HyperX Cloud III", image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=800&h=600&fit=crop", currentPrice: 156000, avgPrice: 210000, discount: 26, store: "megatone", url: "https://megatone.net", stock: "available", category: "audio", publishedAt: new Date(Date.now() - 16 * 60 * 60 * 1000) },
+  { id: 35, name: "Earbuds True Wireless", brand: "Galaxy Buds2 Pro", image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=800&h=600&fit=crop", currentPrice: 85000, avgPrice: 120000, discount: 29, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "audio", publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000) },
 
   // SUBS
-  { id: 36, name: "PlayStation Plus 12 Meses", brand: "Sony", image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=800&h=600&fit=crop", currentPrice: 45000, avgPrice: 65000, discount: 31, store: "mercadolibre", url: "#", stock: "available", category: "subs" },
-  { id: 37, name: "Xbox Game Pass Ultimate 3M", brand: "Microsoft", image: "https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=800&h=600&fit=crop", currentPrice: 28000, avgPrice: 38000, discount: 26, store: "mercadolibre", url: "#", stock: "available", category: "subs" },
-  { id: 38, name: "Spotify Premium 6 Meses", brand: "Spotify", image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=800&h=600&fit=crop", currentPrice: 12000, avgPrice: 18000, discount: 33, store: "mercadolibre", url: "#", stock: "available", category: "subs" },
-  { id: 39, name: "Nintendo Switch Online 12M", brand: "Nintendo", image: "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=800&h=600&fit=crop", currentPrice: 18000, avgPrice: 25000, discount: 28, store: "mercadolibre", url: "#", stock: "available", category: "subs" },
-  { id: 40, name: "YouTube Premium 12 Meses", brand: "Google", image: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=800&h=600&fit=crop", currentPrice: 22000, avgPrice: 32000, discount: 31, store: "mercadolibre", url: "#", stock: "available", category: "subs" },
+  { id: 36, name: "PlayStation Plus 12 Meses", brand: "Sony", image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=800&h=600&fit=crop", currentPrice: 45000, avgPrice: 65000, discount: 31, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "subs", publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+  { id: 37, name: "Xbox Game Pass Ultimate 3M", brand: "Microsoft", image: "https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=800&h=600&fit=crop", currentPrice: 28000, avgPrice: 38000, discount: 26, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "subs", publishedAt: new Date(Date.now() - 7 * 60 * 60 * 1000) },
+  { id: 38, name: "Spotify Premium 6 Meses", brand: "Spotify", image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=800&h=600&fit=crop", currentPrice: 12000, avgPrice: 18000, discount: 33, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "subs", publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000) },
+  { id: 39, name: "Nintendo Switch Online 12M", brand: "Nintendo", image: "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=800&h=600&fit=crop", currentPrice: 18000, avgPrice: 25000, discount: 28, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "subs", publishedAt: new Date(Date.now() - 10 * 60 * 60 * 1000) },
+  { id: 40, name: "YouTube Premium 12 Meses", brand: "Google", image: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=800&h=600&fit=crop", currentPrice: 22000, avgPrice: 32000, discount: 31, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "subs", publishedAt: new Date(Date.now() - 14 * 60 * 60 * 1000) },
 
   // GEEK
-  { id: 41, name: "Funko Pop! Mandalorian", brand: "Funko", image: "https://images.unsplash.com/photo-1608889825103-eb5ed706fc64?w=800&h=600&fit=crop", currentPrice: 18000, avgPrice: 28000, discount: 36, store: "mercadolibre", url: "#", stock: "low", category: "geek" },
-  { id: 42, name: "Mousepad XXL RGB", brand: "Razer", image: "https://images.unsplash.com/photo-1616588589676-62b3bd4ff6d2?w=800&h=600&fit=crop", currentPrice: 45000, avgPrice: 62000, discount: 27, store: "mercadolibre", url: "#", stock: "available", category: "geek" },
-  { id: 43, name: "Lámpara LED Pikachu", brand: "Pokemon", image: "https://images.unsplash.com/photo-1609372332255-611485350f25?w=800&h=600&fit=crop", currentPrice: 25000, avgPrice: 38000, discount: 34, store: "mercadolibre", url: "#", stock: "available", category: "geek" },
-  { id: 44, name: "Remera Stranger Things", brand: "Netflix", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=600&fit=crop", currentPrice: 15000, avgPrice: 22000, discount: 32, store: "mercadolibre", url: "#", stock: "low", category: "geek" },
-  { id: 45, name: "Lego Star Wars Falcon", brand: "Lego", image: "https://images.unsplash.com/photo-1585366119957-e9730b6d0f60?w=800&h=600&fit=crop", currentPrice: 85000, avgPrice: 120000, discount: 29, store: "mercadolibre", url: "#", stock: "available", category: "geek" },
+  { id: 41, name: "Funko Pop! Mandalorian", brand: "Funko", image: "https://images.unsplash.com/photo-1608889825103-eb5ed706fc64?w=800&h=600&fit=crop", currentPrice: 18000, avgPrice: 28000, discount: 36, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "geek", publishedAt: new Date(Date.now() - 1 * 60 * 60 * 1000) },
+  { id: 42, name: "Mousepad XXL RGB", brand: "Razer", image: "https://images.unsplash.com/photo-1616588589676-62b3bd4ff6d2?w=800&h=600&fit=crop", currentPrice: 45000, avgPrice: 62000, discount: 27, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "geek", publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000) },
+  { id: 43, name: "Lámpara LED Pikachu", brand: "Pokemon", image: "https://images.unsplash.com/photo-1609372332255-611485350f25?w=800&h=600&fit=crop", currentPrice: 25000, avgPrice: 38000, discount: 34, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "geek", publishedAt: new Date(Date.now() - 9 * 60 * 60 * 1000) },
+  { id: 44, name: "Remera Stranger Things", brand: "Netflix", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=600&fit=crop", currentPrice: 15000, avgPrice: 22000, discount: 32, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "geek", publishedAt: new Date(Date.now() - 3 * 60 * 60 * 1000) },
+  { id: 45, name: "Lego Star Wars Falcon", brand: "Lego", image: "https://images.unsplash.com/photo-1585366119957-e9730b6d0f60?w=800&h=600&fit=crop", currentPrice: 85000, avgPrice: 120000, discount: 29, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "geek", publishedAt: new Date(Date.now() - 18 * 60 * 60 * 1000) },
 ];
 
 // ============================================
@@ -97,7 +97,9 @@ const stores = {
 // UTILS
 // ============================================
 const formatPrice = (p) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(p);
+
 const getScore = (discount) => Math.min((discount / 40 * 10), 10).toFixed(1);
+
 const getScoreLabel = (discount) => {
   if (discount >= 35) return { label: 'ÉPICA', color: '#f97316' };
   if (discount >= 28) return { label: 'MUY BUENA', color: '#22c55e' };
@@ -105,13 +107,94 @@ const getScoreLabel = (discount) => {
   return { label: 'OK', color: '#6b7280' };
 };
 
+const getTimeAgo = (date) => {
+  const now = new Date();
+  const diff = now - date;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  
+  if (days > 0) return `${days}d`;
+  if (hours > 0) return `${hours}h`;
+  return `${minutes}m`;
+};
+
 // ============================================
-// PREVIEW CARD (lateral)
+// SHARE MODAL
+// ============================================
+const ShareModal = ({ deal, onClose }) => {
+  const shareUrl = `${window.location.origin}${window.location.pathname}?deal=${deal.id}`;
+  const shareText = `🔥 ${deal.name} a ${formatPrice(deal.currentPrice)} (-${deal.discount}%) en NerDeals`;
+  
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shareUrl);
+    alert('¡Link copiado!');
+  };
+  
+  const shareTwitter = () => {
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+  };
+  
+  const shareWhatsApp = () => {
+    window.open(`https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`, '_blank');
+  };
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 100,
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: '#111', borderRadius: '20px', maxWidth: '400px', width: '100%',
+        padding: '24px', border: '1px solid #222',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0 }}>Compartir oferta</h3>
+          <button onClick={onClose} style={{
+            background: '#222', border: 'none', color: '#fff', width: '32px', height: '32px',
+            borderRadius: '8px', cursor: 'pointer', fontSize: '16px',
+          }}>✕</button>
+        </div>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <button onClick={shareTwitter} style={{
+            display: 'flex', alignItems: 'center', gap: '12px',
+            background: '#1DA1F2', border: 'none', borderRadius: '12px',
+            padding: '14px 20px', color: '#fff', fontSize: '15px', fontWeight: '600',
+            cursor: 'pointer',
+          }}>
+            <span>🐦</span> Compartir en Twitter
+          </button>
+          
+          <button onClick={shareWhatsApp} style={{
+            display: 'flex', alignItems: 'center', gap: '12px',
+            background: '#25D366', border: 'none', borderRadius: '12px',
+            padding: '14px 20px', color: '#fff', fontSize: '15px', fontWeight: '600',
+            cursor: 'pointer',
+          }}>
+            <span>💬</span> Compartir en WhatsApp
+          </button>
+          
+          <button onClick={copyToClipboard} style={{
+            display: 'flex', alignItems: 'center', gap: '12px',
+            background: '#333', border: 'none', borderRadius: '12px',
+            padding: '14px 20px', color: '#fff', fontSize: '15px', fontWeight: '600',
+            cursor: 'pointer',
+          }}>
+            <span>🔗</span> Copiar link
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================
+// PREVIEW CARD
 // ============================================
 const PreviewCard = ({ deal, onClick }) => {
   if (!deal) return <div style={{ width: '200px', flexShrink: 0 }} />;
   
-  const store = stores[deal.store];
   const scoreInfo = getScoreLabel(deal.discount);
   
   return (
@@ -142,7 +225,6 @@ const PreviewCard = ({ deal, onClick }) => {
         <p style={{ fontSize: '10px', color: '#4ade80', margin: 0, textTransform: 'uppercase', fontWeight: '600' }}>{deal.brand}</p>
         <p style={{ fontSize: '13px', color: '#fff', margin: '4px 0', fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{deal.name}</p>
         <p style={{ fontSize: '16px', color: '#fff', margin: 0, fontWeight: 'bold' }}>{formatPrice(deal.currentPrice)}</p>
-        <p style={{ fontSize: '11px', color: '#666', margin: '2px 0 0 0', textDecoration: 'line-through' }}>{formatPrice(deal.avgPrice)}</p>
       </div>
     </div>
   );
@@ -151,7 +233,7 @@ const PreviewCard = ({ deal, onClick }) => {
 // ============================================
 // MAIN CARD
 // ============================================
-const MainCard = ({ deal }) => {
+const MainCard = ({ deal, onShare }) => {
   const store = stores[deal.store] || { name: deal.store, short: deal.store, color: '#666', text: '#fff' };
   const score = getScore(deal.discount);
   const scoreInfo = getScoreLabel(deal.discount);
@@ -241,14 +323,23 @@ const MainCard = ({ deal }) => {
           <p style={{ fontSize: '12px', color: '#666', margin: '8px 0 0 0', textAlign: 'right' }}>{deal.discount}% menos que el promedio</p>
         </div>
 
-        {/* CTA */}
-        <a href={deal.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-          <button style={{
-            width: '100%', padding: '18px', borderRadius: '14px', border: 'none',
-            background: 'linear-gradient(135deg, #22c55e, #06b6d4)',
-            color: '#000', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer',
-          }}>Ver en {store.name} →</button>
-        </a>
+        {/* CTAs */}
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <a href={deal.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', flex: 1 }}>
+            <button style={{
+              width: '100%', padding: '16px', borderRadius: '12px', border: 'none',
+              background: 'linear-gradient(135deg, #22c55e, #06b6d4)',
+              color: '#000', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer',
+            }}>Ver en {store.name} →</button>
+          </a>
+          <button 
+            onClick={onShare}
+            style={{
+              padding: '16px 20px', borderRadius: '12px', border: '1px solid #333',
+              background: '#111', color: '#fff', fontSize: '16px', cursor: 'pointer',
+            }}
+          >📤</button>
+        </div>
       </div>
     </div>
   );
@@ -361,6 +452,37 @@ const LegalModal = ({ type, onClose }) => (
 );
 
 // ============================================
+// EMPTY STATE
+// ============================================
+const EmptyState = ({ searchTerm, onClear }) => (
+  <div style={{ 
+    textAlign: 'center', 
+    padding: '60px 20px',
+    maxWidth: '400px',
+    margin: '0 auto',
+  }}>
+    <div style={{ fontSize: '64px', marginBottom: '20px' }}>🔍</div>
+    <h3 style={{ color: 'white', fontSize: '20px', margin: '0 0 12px 0' }}>
+      No encontramos ofertas
+    </h3>
+    <p style={{ color: '#666', fontSize: '15px', margin: '0 0 24px 0', lineHeight: 1.5 }}>
+      No hay resultados para "<span style={{ color: '#fff' }}>{searchTerm}</span>".
+      <br />Probá con otro término o explorá las categorías.
+    </p>
+    <button 
+      onClick={onClear}
+      style={{
+        background: '#222', border: 'none', borderRadius: '12px',
+        padding: '14px 28px', color: '#fff', fontSize: '15px',
+        fontWeight: '600', cursor: 'pointer',
+      }}
+    >
+      Limpiar búsqueda
+    </button>
+  </div>
+);
+
+// ============================================
 // MAIN APP
 // ============================================
 export default function App() {
@@ -369,23 +491,26 @@ export default function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [legalModal, setLegalModal] = useState(null);
+  const [shareModal, setShareModal] = useState(null);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
-  const [countdown, setCountdown] = useState({ hours: 2, minutes: 45, seconds: 30 });
 
-  // Countdown timer
+  // Handle URL params for direct deal link
   useEffect(() => {
-    const timer = setInterval(() => {
-      setCountdown(prev => {
-        let { hours, minutes, seconds } = prev;
-        seconds--;
-        if (seconds < 0) { seconds = 59; minutes--; }
-        if (minutes < 0) { minutes = 59; hours--; }
-        if (hours < 0) { hours = 23; minutes = 59; seconds = 59; }
-        return { hours, minutes, seconds };
-      });
-    }, 1000);
-    return () => clearInterval(timer);
+    const params = new URLSearchParams(window.location.search);
+    const dealId = params.get('deal');
+    if (dealId) {
+      const dealIndex = dealsData.findIndex(d => d.id === parseInt(dealId));
+      if (dealIndex !== -1) {
+        setActiveCategory('top');
+        // Find index in sorted array
+        const sortedDeals = [...dealsData].sort((a, b) => b.discount - a.discount);
+        const sortedIndex = sortedDeals.findIndex(d => d.id === parseInt(dealId));
+        if (sortedIndex !== -1) {
+          setCurrentIndex(sortedIndex);
+        }
+      }
+    }
   }, []);
 
   // Get filtered deals
@@ -411,7 +536,8 @@ export default function App() {
   // Navigation
   const goNext = () => currentIndex < deals.length - 1 && setCurrentIndex(currentIndex + 1);
   const goPrev = () => currentIndex > 0 && setCurrentIndex(currentIndex - 1);
-  const changeCategory = (catId) => { setActiveCategory(catId); setCurrentIndex(0); setSearchTerm(''); };
+  const changeCategory = (catId) => { setActiveCategory(catId); setCurrentIndex(0); };
+  const clearSearch = () => { setSearchTerm(''); setCurrentIndex(0); };
 
   // Swipe
   const onTouchStart = (e) => { setTouchEnd(null); setTouchStart(e.targetTouches[0].clientX); };
@@ -466,18 +592,6 @@ export default function App() {
       {/* CATEGORIES + SEARCH */}
       <div style={{ borderBottom: '1px solid #1a1a1a', padding: '12px 20px', overflowX: 'auto' }}>
         <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center', minWidth: 'max-content' }}>
-          {/* Search */}
-          <div style={{ display: 'flex', alignItems: 'center', background: '#111', borderRadius: '25px', padding: '8px 16px', gap: '8px', border: '1px solid #222', marginRight: '8px' }}>
-            <span style={{ color: '#666', fontSize: '14px' }}>🔍</span>
-            <input 
-              type="text" 
-              placeholder="Buscar..." 
-              value={searchTerm}
-              onChange={e => { setSearchTerm(e.target.value); setCurrentIndex(0); }}
-              style={{ background: 'transparent', border: 'none', outline: 'none', color: 'white', fontSize: '13px', width: '120px' }}
-            />
-          </div>
-          
           {categories.map(cat => (
             <button
               key={cat.id}
@@ -494,6 +608,18 @@ export default function App() {
               <span style={{ fontSize: '14px', fontWeight: '600', color: activeCategory === cat.id ? cat.color : '#888' }}>{cat.name}</span>
             </button>
           ))}
+          
+          {/* Search - Right side */}
+          <div style={{ display: 'flex', alignItems: 'center', background: '#111', borderRadius: '25px', padding: '8px 16px', gap: '8px', border: '1px solid #222', marginLeft: '8px' }}>
+            <span style={{ color: '#666', fontSize: '14px' }}>🔍</span>
+            <input 
+              type="text" 
+              placeholder="Buscar..." 
+              value={searchTerm}
+              onChange={e => { setSearchTerm(e.target.value); setCurrentIndex(0); }}
+              style={{ background: 'transparent', border: 'none', outline: 'none', color: 'white', fontSize: '13px', width: '100px' }}
+            />
+          </div>
         </div>
       </div>
 
@@ -504,142 +630,119 @@ export default function App() {
           <span style={{ fontSize: '24px', fontWeight: '700', color: category?.color }}>{category?.name}</span>
         </div>
         <p style={{ fontSize: '14px', color: '#666', margin: '8px 0 0 0' }}>
-          {searchTerm ? `${deals.length} resultados para "${searchTerm}"` : `Oferta ${currentIndex + 1} de ${deals.length}`}
+          {searchTerm ? `${deals.length} resultados` : `Oferta ${currentIndex + 1} de ${deals.length}`}
         </p>
       </div>
 
-      {/* URGENCY BANNER */}
+      {/* URGENCY BADGES */}
       {currentDeal && (
         <div style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          justifyContent: 'center', 
-          gap: '24px',
-          padding: '12px 20px',
-          flexWrap: 'wrap',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', 
+          gap: '16px', padding: '8px 20px', flexWrap: 'wrap',
         }}>
-          {/* Countdown */}
+          {/* Time ago */}
           <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: 'rgba(239,68,68,0.1)',
-            border: '1px solid rgba(239,68,68,0.3)',
-            borderRadius: '12px',
-            padding: '10px 16px',
+            display: 'flex', alignItems: 'center', gap: '8px',
+            background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)',
+            borderRadius: '20px', padding: '8px 14px',
           }}>
-            <span style={{ fontSize: '18px' }}>⏰</span>
-            <span style={{ color: '#ef4444', fontSize: '14px', fontWeight: '600' }}>Termina en</span>
-            <span style={{ 
-              color: '#ef4444', 
-              fontSize: '18px', 
-              fontWeight: 'bold',
-              fontFamily: 'monospace',
-            }}>
-              {String(countdown.hours).padStart(2, '0')}:{String(countdown.minutes).padStart(2, '0')}:{String(countdown.seconds).padStart(2, '0')}
+            <span style={{ fontSize: '14px' }}>📅</span>
+            <span style={{ color: '#818cf8', fontSize: '13px', fontWeight: '600' }}>
+              Publicado hace {getTimeAgo(currentDeal.publishedAt)}
             </span>
           </div>
 
-          {/* Dynamic Message */}
-          <div style={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            background: currentDeal.stock === 'low' 
-              ? 'rgba(251,191,36,0.1)' 
-              : currentDeal.discount >= 35 
-                ? 'rgba(249,115,22,0.1)' 
-                : 'rgba(34,197,94,0.1)',
-            border: `1px solid ${currentDeal.stock === 'low' 
-              ? 'rgba(251,191,36,0.3)' 
-              : currentDeal.discount >= 35 
-                ? 'rgba(249,115,22,0.3)' 
-                : 'rgba(34,197,94,0.3)'}`,
-            borderRadius: '12px',
-            padding: '10px 16px',
-          }}>
-            <span style={{ fontSize: '18px' }}>
-              {currentDeal.stock === 'low' ? '⚡' : currentDeal.discount >= 35 ? '🔥' : '💎'}
-            </span>
-            <span style={{ 
-              color: currentDeal.stock === 'low' 
-                ? '#fbbf24' 
-                : currentDeal.discount >= 35 
-                  ? '#f97316' 
-                  : '#22c55e', 
-              fontSize: '14px', 
-              fontWeight: '600' 
+          {/* Low price badge - only for 30%+ */}
+          {currentDeal.discount >= 30 && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+              background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.3)',
+              borderRadius: '20px', padding: '8px 14px',
             }}>
-              {currentDeal.stock === 'low' 
-                ? '¡Últimas unidades disponibles!' 
-                : currentDeal.discount >= 35 
-                  ? '¡Precio histórico más bajo!' 
-                  : 'Solo hoy a este precio'}
-            </span>
-          </div>
+              <span style={{ fontSize: '14px' }}>📉</span>
+              <span style={{ color: '#f97316', fontSize: '13px', fontWeight: '600' }}>
+                Precio más bajo en 30 días
+              </span>
+            </div>
+          )}
+
+          {/* Stock badge - only if low */}
+          {currentDeal.stock === 'low' && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+              background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.3)',
+              borderRadius: '20px', padding: '8px 14px',
+            }}>
+              <span style={{ fontSize: '14px' }}>⚡</span>
+              <span style={{ color: '#fbbf24', fontSize: '13px', fontWeight: '600' }}>
+                Stock limitado
+              </span>
+            </div>
+          )}
         </div>
       )}
 
       {/* CAROUSEL */}
-      <div 
-        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px 20px', gap: '20px' }}
-        onTouchStart={onTouchStart}
-        onTouchMove={onTouchMove}
-        onTouchEnd={onTouchEnd}
-      >
-        {/* Prev Card - Desktop */}
-        <div className="desktop-only" style={{ display: 'none' }}>
-          <PreviewCard deal={prevDeal} onClick={goPrev} />
+      {deals.length > 0 ? (
+        <div 
+          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px 20px', gap: '20px' }}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          {/* Prev Card - Desktop */}
+          <div className="desktop-only" style={{ display: 'none' }}>
+            <PreviewCard deal={prevDeal} onClick={goPrev} />
+          </div>
+
+          {/* Arrow Left */}
+          <button onClick={goPrev} disabled={currentIndex === 0} style={{
+            width: '50px', height: '50px', borderRadius: '50%', border: 'none',
+            background: currentIndex === 0 ? '#111' : '#222',
+            color: currentIndex === 0 ? '#333' : '#fff',
+            fontSize: '20px', cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
+            flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>←</button>
+
+          {/* Main Card */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            {currentDeal && <MainCard deal={currentDeal} onShare={() => setShareModal(currentDeal)} />}
+          </div>
+
+          {/* Arrow Right */}
+          <button onClick={goNext} disabled={currentIndex === deals.length - 1} style={{
+            width: '50px', height: '50px', borderRadius: '50%', border: 'none',
+            background: currentIndex === deals.length - 1 ? '#111' : '#222',
+            color: currentIndex === deals.length - 1 ? '#333' : '#fff',
+            fontSize: '20px', cursor: currentIndex === deals.length - 1 ? 'not-allowed' : 'pointer',
+            flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>→</button>
+
+          {/* Next Card - Desktop */}
+          <div className="desktop-only" style={{ display: 'none' }}>
+            <PreviewCard deal={nextDeal} onClick={goNext} />
+          </div>
         </div>
-
-        {/* Arrow Left */}
-        <button onClick={goPrev} disabled={currentIndex === 0} style={{
-          width: '50px', height: '50px', borderRadius: '50%', border: 'none',
-          background: currentIndex === 0 ? '#111' : '#222',
-          color: currentIndex === 0 ? '#333' : '#fff',
-          fontSize: '20px', cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
-          flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>←</button>
-
-        {/* Main Card */}
-        <div style={{ display: 'flex', justifyContent: 'center' }}>
-          {currentDeal ? <MainCard deal={currentDeal} /> : (
-            <div style={{ padding: '40px', textAlign: 'center', color: '#666' }}>
-              <p style={{ fontSize: '48px', margin: '0 0 16px 0' }}>🔍</p>
-              <p style={{ fontSize: '16px', margin: 0 }}>No hay ofertas para mostrar</p>
-            </div>
-          )}
-        </div>
-
-        {/* Arrow Right */}
-        <button onClick={goNext} disabled={currentIndex === deals.length - 1} style={{
-          width: '50px', height: '50px', borderRadius: '50%', border: 'none',
-          background: currentIndex === deals.length - 1 ? '#111' : '#222',
-          color: currentIndex === deals.length - 1 ? '#333' : '#fff',
-          fontSize: '20px', cursor: currentIndex === deals.length - 1 ? 'not-allowed' : 'pointer',
-          flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>→</button>
-
-        {/* Next Card - Desktop */}
-        <div className="desktop-only" style={{ display: 'none' }}>
-          <PreviewCard deal={nextDeal} onClick={goNext} />
-        </div>
-      </div>
+      ) : (
+        <EmptyState searchTerm={searchTerm} onClear={clearSearch} />
+      )}
 
       {/* DOTS */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '12px 16px' }}>
-        {deals.slice(0, 10).map((_, i) => (
-          <button key={i} onClick={() => setCurrentIndex(i)} style={{
-            width: i === currentIndex ? '24px' : '8px', height: '8px', borderRadius: '4px',
-            background: i === currentIndex ? category?.color : '#333',
-            border: 'none', cursor: 'pointer', transition: 'all 0.2s',
-          }} />
-        ))}
-        {deals.length > 10 && <span style={{ fontSize: '11px', color: '#666', marginLeft: '6px' }}>+{deals.length - 10} más</span>}
-      </div>
+      {deals.length > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '12px 16px' }}>
+          {deals.slice(0, 10).map((_, i) => (
+            <button key={i} onClick={() => setCurrentIndex(i)} style={{
+              width: i === currentIndex ? '24px' : '8px', height: '8px', borderRadius: '4px',
+              background: i === currentIndex ? category?.color : '#333',
+              border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+            }} />
+          ))}
+          {deals.length > 10 && <span style={{ fontSize: '11px', color: '#666', marginLeft: '6px' }}>+{deals.length - 10} más</span>}
+        </div>
+      )}
 
       {/* FOOTER */}
-      <footer style={{ borderTop: '1px solid #1a1a1a', padding: '16px 20px' }}>
+      <footer style={{ borderTop: '1px solid #1a1a1a', padding: '16px 20px', marginTop: 'auto' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '20px' }}>
           <button onClick={() => setLegalModal('terminos')} style={{ background: 'none', border: 'none', color: '#666', fontSize: '13px', cursor: 'pointer' }}>Términos</button>
           <button onClick={() => setLegalModal('privacidad')} style={{ background: 'none', border: 'none', color: '#666', fontSize: '13px', cursor: 'pointer' }}>Privacidad</button>
@@ -654,6 +757,7 @@ export default function App() {
       {/* MODALS */}
       {showHowItWorks && <HowItWorksModal onClose={() => setShowHowItWorks(false)} />}
       {legalModal && <LegalModal type={legalModal} onClose={() => setLegalModal(null)} />}
+      {shareModal && <ShareModal deal={shareModal} onClose={() => setShareModal(null)} />}
 
       {/* CSS */}
       <style>{`
