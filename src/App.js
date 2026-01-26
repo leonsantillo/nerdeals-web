@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 
 // ============================================
 // CATEGORÍAS
@@ -333,20 +333,27 @@ const LegalModal = ({ type, onClose }) => (
           borderRadius: '8px', cursor: 'pointer', fontSize: '16px',
         }}>✕</button>
       </div>
-      <p style={{ color: '#666', fontSize: '12px', marginBottom: '20px' }}>Última actualización: Enero 2025</p>
+      <p style={{ color: '#666', fontSize: '12px', marginBottom: '20px' }}>Última actualización: Enero 2026</p>
       
       {type === 'terminos' ? (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>1. Sobre NerDeals</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals es un servicio de curaduría de ofertas tecnológicas en Argentina. No vendemos productos ni intermediamos ventas.</p></div>
-          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>2. Enlaces de afiliados</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Participamos en programas de afiliados. Los clicks pueden generar comisiones sin costo adicional para vos.</p></div>
-          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>3. Precios</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Los precios son referenciales y pueden cambiar. Verificá siempre en el sitio del vendedor.</p></div>
-          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>4. Responsabilidad</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>No somos responsables por transacciones con terceros, calidad de productos, envíos o reclamos.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>1. Sobre NerDeals</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals es un servicio independiente de curaduría y difusión de ofertas tecnológicas disponible en la República Argentina. NerDeals no es una tienda, no comercializa productos, no intermedia ventas ni presta servicios de pago, y no mantiene relación contractual directa con los vendedores de los productos publicados.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>2. Naturaleza del servicio</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals identifica y comparte ofertas que considera relevantes para su audiencia, basándose en criterios propios de análisis de precio, reputación del vendedor y disponibilidad pública de la información. NerDeals participa en programas de afiliados de terceros, tales como Mercado Libre Partners y Amazon Associates, entre otros. Cuando el usuario hace clic en un enlace y realiza una compra en un sitio de terceros, NerDeals puede recibir una comisión, sin que ello implique un costo adicional para el usuario.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>3. Información de precios y disponibilidad</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Los precios, descuentos y disponibilidad mostrados en NerDeals son referenciales y pueden modificarse en cualquier momento por los vendedores sin previo aviso. NerDeals no garantiza la vigencia de los precios publicados ni la disponibilidad de stock. El usuario debe verificar siempre el precio final, condiciones de venta y características del producto directamente en el sitio del vendedor antes de realizar una compra.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>4. Comparaciones e historial de precios</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Las comparaciones de precios (por ejemplo, "precio promedio de 30 días") se basan en estimaciones realizadas a partir de información pública disponible al momento del análisis. Dichas comparaciones no constituyen una garantía de precio, no representan un historial exhaustivo, y pueden no reflejar la totalidad de las variaciones del mercado. NerDeals no garantiza la exactitud absoluta de estos datos, los cuales se ofrecen únicamente con fines informativos.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>5. Responsabilidad</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals no es responsable por: las transacciones realizadas en sitios de terceros, la calidad, funcionamiento o autenticidad de los productos, envíos, garantías, devoluciones, cancelaciones o reclamos. Cualquier inconveniente relacionado con la compra debe ser gestionado exclusivamente entre el usuario y el vendedor o plataforma correspondiente.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>6. Limitación de responsabilidad</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>El uso del sitio NerDeals implica la aceptación expresa de que el servicio se brinda "tal como está", sin garantías explícitas ni implícitas. En ningún caso NerDeals será responsable por daños directos, indirectos, incidentales o consecuentes derivados del uso del sitio o de la información publicada.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>7. Aceptación</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>El acceso y uso de NerDeals implica la aceptación plena de los presentes Términos y Condiciones.</p></div>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>1. Datos recopilados</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Recopilamos información anónima de navegación para mejorar el servicio.</p></div>
-          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>2. Cookies</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Usamos cookies para análisis y seguimiento de afiliados.</p></div>
-          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>3. Enlaces externos</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Los enlaces llevan a sitios con sus propias políticas de privacidad.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>1. Información que recopilamos</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals recopila información mínima y no identificable con el objetivo de mejorar la experiencia del usuario y el funcionamiento del sitio. Esta información puede incluir: datos de navegación anónimos, tipo de dispositivo, navegador y sistema operativo, interacciones con enlaces y contenidos del sitio. NerDeals no recopila datos personales sensibles ni información que permita identificar directamente a los usuarios.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>2. Uso de cookies</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals utiliza cookies propias y de terceros con fines funcionales, analíticos y de seguimiento de conversiones de afiliados. Las cookies pueden utilizarse para: analizar el uso del sitio, medir el rendimiento de las ofertas publicadas, atribuir compras a programas de afiliados. El usuario puede configurar su navegador para rechazar o eliminar cookies, aunque esto puede afectar el correcto funcionamiento del sitio.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>3. Enlaces a sitios de terceros</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals contiene enlaces a sitios web de terceros. Al hacer clic en una oferta, el usuario es redirigido a plataformas externas que cuentan con sus propias políticas de privacidad y términos, sobre los cuales NerDeals no tiene control ni responsabilidad.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>4. Programas de afiliados</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals participa en programas de afiliados de terceros. Estos programas pueden utilizar cookies u otras tecnologías de seguimiento para registrar las compras originadas desde nuestro sitio, sin generar ningún costo adicional para el usuario.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>5. Compartir información</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals no vende, alquila ni comparte información personal identificable de los usuarios con terceros. La información recopilada es utilizada únicamente con fines estadísticos, analíticos y operativos.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>6. Seguridad</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals adopta medidas razonables para proteger la información recopilada. Sin embargo, el usuario reconoce que ningún sistema de transmisión o almacenamiento de datos es completamente seguro, y NerDeals no puede garantizar una seguridad absoluta.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>7. Aceptación</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>El uso del sitio NerDeals implica la aceptación de la presente Política de Privacidad.</p></div>
         </div>
       )}
     </div>
@@ -364,6 +371,22 @@ export default function App() {
   const [legalModal, setLegalModal] = useState(null);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
+  const [countdown, setCountdown] = useState({ hours: 2, minutes: 45, seconds: 30 });
+
+  // Countdown timer
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCountdown(prev => {
+        let { hours, minutes, seconds } = prev;
+        seconds--;
+        if (seconds < 0) { seconds = 59; minutes--; }
+        if (minutes < 0) { minutes = 59; hours--; }
+        if (hours < 0) { hours = 23; minutes = 59; seconds = 59; }
+        return { hours, minutes, seconds };
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
 
   // Get filtered deals
   const deals = useMemo(() => {
@@ -415,25 +438,11 @@ export default function App() {
       
       {/* HEADER */}
       <header style={{ borderBottom: '1px solid #1a1a1a', padding: '12px 20px' }}>
-        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
           {/* Logo */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ width: '38px', height: '38px', background: 'linear-gradient(135deg, #4ade80, #06b6d4)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', fontSize: '20px', color: '#000' }}>N</div>
             <span style={{ fontSize: '22px', fontWeight: 'bold' }}>Ner<span style={{ color: '#4ade80' }}>Deals</span></span>
-          </div>
-
-          {/* Search */}
-          <div style={{ flex: 1, maxWidth: '400px', minWidth: '200px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', background: '#111', borderRadius: '12px', padding: '10px 16px', gap: '10px', border: '1px solid #222' }}>
-              <span style={{ color: '#666' }}>🔍</span>
-              <input 
-                type="text" 
-                placeholder="Buscar ofertas..." 
-                value={searchTerm}
-                onChange={e => { setSearchTerm(e.target.value); setCurrentIndex(0); }}
-                style={{ background: 'transparent', border: 'none', outline: 'none', color: 'white', fontSize: '14px', width: '100%' }}
-              />
-            </div>
           </div>
 
           {/* Actions */}
@@ -454,9 +463,21 @@ export default function App() {
         </div>
       </header>
 
-      {/* CATEGORIES */}
+      {/* CATEGORIES + SEARCH */}
       <div style={{ borderBottom: '1px solid #1a1a1a', padding: '12px 20px', overflowX: 'auto' }}>
-        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', minWidth: 'max-content' }}>
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center', minWidth: 'max-content' }}>
+          {/* Search */}
+          <div style={{ display: 'flex', alignItems: 'center', background: '#111', borderRadius: '25px', padding: '8px 16px', gap: '8px', border: '1px solid #222', marginRight: '8px' }}>
+            <span style={{ color: '#666', fontSize: '14px' }}>🔍</span>
+            <input 
+              type="text" 
+              placeholder="Buscar..." 
+              value={searchTerm}
+              onChange={e => { setSearchTerm(e.target.value); setCurrentIndex(0); }}
+              style={{ background: 'transparent', border: 'none', outline: 'none', color: 'white', fontSize: '13px', width: '120px' }}
+            />
+          </div>
+          
           {categories.map(cat => (
             <button
               key={cat.id}
@@ -476,8 +497,8 @@ export default function App() {
         </div>
       </div>
 
-      {/* CATEGORY TITLE */}
-      <div style={{ textAlign: 'center', padding: '20px 16px 12px' }}>
+      {/* CATEGORY TITLE + URGENCY */}
+      <div style={{ textAlign: 'center', padding: '20px 16px 8px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
           <span style={{ fontSize: '28px' }}>{category?.emoji}</span>
           <span style={{ fontSize: '24px', fontWeight: '700', color: category?.color }}>{category?.name}</span>
@@ -486,6 +507,78 @@ export default function App() {
           {searchTerm ? `${deals.length} resultados para "${searchTerm}"` : `Oferta ${currentIndex + 1} de ${deals.length}`}
         </p>
       </div>
+
+      {/* URGENCY BANNER */}
+      {currentDeal && (
+        <div style={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          justifyContent: 'center', 
+          gap: '24px',
+          padding: '12px 20px',
+          flexWrap: 'wrap',
+        }}>
+          {/* Countdown */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'rgba(239,68,68,0.1)',
+            border: '1px solid rgba(239,68,68,0.3)',
+            borderRadius: '12px',
+            padding: '10px 16px',
+          }}>
+            <span style={{ fontSize: '18px' }}>⏰</span>
+            <span style={{ color: '#ef4444', fontSize: '14px', fontWeight: '600' }}>Termina en</span>
+            <span style={{ 
+              color: '#ef4444', 
+              fontSize: '18px', 
+              fontWeight: 'bold',
+              fontFamily: 'monospace',
+            }}>
+              {String(countdown.hours).padStart(2, '0')}:{String(countdown.minutes).padStart(2, '0')}:{String(countdown.seconds).padStart(2, '0')}
+            </span>
+          </div>
+
+          {/* Dynamic Message */}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: currentDeal.stock === 'low' 
+              ? 'rgba(251,191,36,0.1)' 
+              : currentDeal.discount >= 35 
+                ? 'rgba(249,115,22,0.1)' 
+                : 'rgba(34,197,94,0.1)',
+            border: `1px solid ${currentDeal.stock === 'low' 
+              ? 'rgba(251,191,36,0.3)' 
+              : currentDeal.discount >= 35 
+                ? 'rgba(249,115,22,0.3)' 
+                : 'rgba(34,197,94,0.3)'}`,
+            borderRadius: '12px',
+            padding: '10px 16px',
+          }}>
+            <span style={{ fontSize: '18px' }}>
+              {currentDeal.stock === 'low' ? '⚡' : currentDeal.discount >= 35 ? '🔥' : '💎'}
+            </span>
+            <span style={{ 
+              color: currentDeal.stock === 'low' 
+                ? '#fbbf24' 
+                : currentDeal.discount >= 35 
+                  ? '#f97316' 
+                  : '#22c55e', 
+              fontSize: '14px', 
+              fontWeight: '600' 
+            }}>
+              {currentDeal.stock === 'low' 
+                ? '¡Últimas unidades disponibles!' 
+                : currentDeal.discount >= 35 
+                  ? '¡Precio histórico más bajo!' 
+                  : 'Solo hoy a este precio'}
+            </span>
+          </div>
+        </div>
+      )}
 
       {/* CAROUSEL */}
       <div 
@@ -554,7 +647,7 @@ export default function App() {
           <a href="https://cafecito.app/nerdeals" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a574', fontSize: '13px', textDecoration: 'none' }}>☕ Cafecito</a>
         </div>
         <p style={{ textAlign: 'center', color: '#444', fontSize: '11px', margin: '12px 0 0 0' }}>
-          NerDeals © 2025 · Precios referenciales · Los enlaces pueden generar comisiones sin costo extra
+          NerDeals © 2026 · Precios referenciales · Los enlaces pueden generar comisiones sin costo extra
         </p>
       </footer>
 
