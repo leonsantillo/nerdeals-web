@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 // ============================================
-// CATEGORÍAS (TOP primero)
+// CATEGORÍAS
 // ============================================
 const categories = [
   { id: 'top', name: 'TOP', emoji: '🔥', color: '#f97316' },
@@ -85,7 +85,7 @@ const dealsData = [
 ];
 
 // ============================================
-// STORES CONFIG
+// STORES
 // ============================================
 const stores = {
   mercadolibre: { name: "Mercado Libre", short: "MELI", color: "#FFE600", text: "#000" },
@@ -97,9 +97,7 @@ const stores = {
 // UTILS
 // ============================================
 const formatPrice = (p) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(p);
-
 const getScore = (discount) => Math.min((discount / 40 * 10), 10).toFixed(1);
-
 const getScoreLabel = (discount) => {
   if (discount >= 35) return { label: 'ÉPICA', color: '#f97316' };
   if (discount >= 28) return { label: 'MUY BUENA', color: '#22c55e' };
@@ -108,178 +106,148 @@ const getScoreLabel = (discount) => {
 };
 
 // ============================================
-// DEAL CARD COMPONENT
+// PREVIEW CARD (lateral)
 // ============================================
-const DealCard = ({ deal, isPreview = false }) => {
+const PreviewCard = ({ deal, onClick }) => {
+  if (!deal) return <div style={{ width: '200px', flexShrink: 0 }} />;
+  
+  const store = stores[deal.store];
+  const scoreInfo = getScoreLabel(deal.discount);
+  
+  return (
+    <div 
+      onClick={onClick}
+      style={{
+        width: '200px',
+        flexShrink: 0,
+        background: '#0a0a0a',
+        borderRadius: '16px',
+        border: '1px solid #222',
+        overflow: 'hidden',
+        cursor: 'pointer',
+        opacity: 0.7,
+        transition: 'all 0.3s',
+      }}
+      onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+      onMouseLeave={e => e.currentTarget.style.opacity = '0.7'}
+    >
+      <div style={{ position: 'relative', height: '120px', overflow: 'hidden' }}>
+        <img src={deal.image} alt={deal.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div style={{ position: 'absolute', top: '8px', right: '8px', background: scoreInfo.color, color: '#000', padding: '4px 8px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold' }}>
+          -{deal.discount}%
+        </div>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%', background: 'linear-gradient(to top, #0a0a0a, transparent)' }} />
+      </div>
+      <div style={{ padding: '12px' }}>
+        <p style={{ fontSize: '10px', color: '#4ade80', margin: 0, textTransform: 'uppercase', fontWeight: '600' }}>{deal.brand}</p>
+        <p style={{ fontSize: '13px', color: '#fff', margin: '4px 0', fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{deal.name}</p>
+        <p style={{ fontSize: '16px', color: '#fff', margin: 0, fontWeight: 'bold' }}>{formatPrice(deal.currentPrice)}</p>
+        <p style={{ fontSize: '11px', color: '#666', margin: '2px 0 0 0', textDecoration: 'line-through' }}>{formatPrice(deal.avgPrice)}</p>
+      </div>
+    </div>
+  );
+};
+
+// ============================================
+// MAIN CARD
+// ============================================
+const MainCard = ({ deal }) => {
   const store = stores[deal.store] || { name: deal.store, short: deal.store, color: '#666', text: '#fff' };
   const score = getScore(deal.discount);
   const scoreInfo = getScoreLabel(deal.discount);
   const savings = deal.avgPrice - deal.currentPrice;
 
-  if (isPreview) {
-    return (
-      <div style={{
-        width: '100%',
-        height: '100%',
-        background: '#0a0a0a',
-        borderRadius: '12px',
-        border: '1px solid #222',
-        overflow: 'hidden',
-        opacity: 0.6,
-        display: 'flex',
-        flexDirection: 'column',
-      }}>
-        <div style={{ flex: 1, background: '#111', overflow: 'hidden' }}>
-          <img src={deal.image} alt={deal.name} style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.7 }} />
-        </div>
-        <div style={{ padding: '10px' }}>
-          <p style={{ fontSize: '11px', color: '#6b7280', margin: 0, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{deal.brand}</p>
-          <p style={{ fontSize: '13px', color: '#999', margin: '4px 0 0 0', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{deal.name}</p>
-          <p style={{ fontSize: '15px', fontWeight: 'bold', color: '#fff', margin: '6px 0 0 0' }}>{formatPrice(deal.currentPrice)}</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div style={{
       width: '100%',
-      maxWidth: '400px',
-      background: deal.discount >= 35 
-        ? 'linear-gradient(180deg, #1a0f00 0%, #0a0500 100%)' 
-        : 'linear-gradient(180deg, #0f0f0f 0%, #050505 100%)',
+      maxWidth: '420px',
+      background: deal.discount >= 35 ? 'linear-gradient(180deg, #1a0f00 0%, #0a0500 100%)' : 'linear-gradient(180deg, #0f0f0f 0%, #050505 100%)',
       borderRadius: '20px',
       border: deal.discount >= 35 ? '2px solid #f97316' : '1px solid #222',
       overflow: 'hidden',
-      display: 'flex',
-      flexDirection: 'column',
     }}>
-      {/* Image Section */}
-      <div style={{
-        position: 'relative',
-        height: '180px',
-        overflow: 'hidden',
-        background: '#111',
-      }}>
+      {/* Image */}
+      <div style={{ position: 'relative', height: '200px', overflow: 'hidden', background: '#111' }}>
         <img src={deal.image} alt={deal.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-        
-        {/* Gradient */}
         <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%', background: 'linear-gradient(to top, #000, transparent)' }} />
         
-        {/* Score Badge */}
+        {/* Score */}
         <div style={{
-          position: 'absolute',
-          top: '10px', left: '10px',
-          background: 'rgba(0,0,0,0.85)',
-          padding: '6px 10px',
-          borderRadius: '8px',
+          position: 'absolute', top: '12px', left: '12px',
+          background: 'rgba(0,0,0,0.85)', padding: '8px 12px', borderRadius: '10px',
           border: `1px solid ${scoreInfo.color}`,
         }}>
-          <div style={{ fontSize: '16px', fontWeight: 'bold', color: scoreInfo.color, lineHeight: 1 }}>
-            {score}<span style={{ fontSize: '11px' }}>/10</span>
+          <div style={{ fontSize: '18px', fontWeight: 'bold', color: scoreInfo.color, lineHeight: 1 }}>
+            {score}<span style={{ fontSize: '12px' }}>/10</span>
           </div>
-          <div style={{ fontSize: '8px', fontWeight: '700', color: scoreInfo.color, letterSpacing: '0.5px' }}>
-            {scoreInfo.label}
-          </div>
+          <div style={{ fontSize: '9px', fontWeight: '700', color: scoreInfo.color, letterSpacing: '0.5px' }}>{scoreInfo.label}</div>
         </div>
 
-        {/* Discount Badge */}
+        {/* Discount */}
         <div style={{
-          position: 'absolute',
-          top: '10px', right: '10px',
+          position: 'absolute', top: '12px', right: '12px',
           background: deal.discount >= 35 ? '#f97316' : '#22c55e',
-          color: '#000',
-          padding: '6px 12px',
-          borderRadius: '8px',
-          fontWeight: 'bold',
-          fontSize: '16px',
+          color: '#000', padding: '8px 14px', borderRadius: '10px',
+          fontWeight: 'bold', fontSize: '18px',
         }}>-{deal.discount}%</div>
 
-        {/* Store Badge */}
+        {/* Store */}
         <div style={{
-          position: 'absolute',
-          bottom: '10px', left: '10px',
-          background: store.color,
-          color: store.text,
-          padding: '4px 10px',
-          borderRadius: '6px',
-          fontWeight: 'bold',
-          fontSize: '10px',
+          position: 'absolute', bottom: '12px', left: '12px',
+          background: store.color, color: store.text,
+          padding: '6px 12px', borderRadius: '8px',
+          fontWeight: 'bold', fontSize: '11px',
         }}>{store.short}</div>
 
-        {/* Stock Badge */}
+        {/* Stock */}
         {deal.stock === 'low' && (
           <div style={{
-            position: 'absolute',
-            bottom: '10px', right: '10px',
-            background: 'rgba(251,191,36,0.2)',
-            color: '#fbbf24',
-            padding: '4px 10px',
-            borderRadius: '6px',
-            fontSize: '10px',
-            fontWeight: '600',
+            position: 'absolute', bottom: '12px', right: '12px',
+            background: 'rgba(251,191,36,0.2)', color: '#fbbf24',
+            padding: '6px 12px', borderRadius: '8px',
+            fontSize: '11px', fontWeight: '600',
             border: '1px solid rgba(251,191,36,0.3)',
           }}>⚡ Pocas unidades</div>
         )}
       </div>
 
-      {/* Info Section */}
-      <div style={{ padding: '16px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-        {/* Brand & Name */}
-        <div>
-          <p style={{ color: '#4ade80', fontSize: '11px', fontWeight: '600', textTransform: 'uppercase', margin: 0 }}>{deal.brand}</p>
-          <h3 style={{ color: 'white', fontSize: '17px', fontWeight: '700', margin: '4px 0 0 0', lineHeight: 1.3 }}>{deal.name}</h3>
-        </div>
+      {/* Info */}
+      <div style={{ padding: '20px' }}>
+        <p style={{ color: '#4ade80', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase', margin: 0 }}>{deal.brand}</p>
+        <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '700', margin: '6px 0 16px 0', lineHeight: 1.3 }}>{deal.name}</h3>
 
         {/* Price */}
-        <div style={{ display: 'flex', alignItems: 'baseline', gap: '10px' }}>
-          <span style={{ fontSize: '28px', fontWeight: 'bold', color: 'white' }}>{formatPrice(deal.currentPrice)}</span>
-          <span style={{ fontSize: '14px', color: '#6b7280', textDecoration: 'line-through' }}>{formatPrice(deal.avgPrice)}</span>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '16px' }}>
+          <span style={{ fontSize: '32px', fontWeight: 'bold', color: 'white' }}>{formatPrice(deal.currentPrice)}</span>
+          <span style={{ fontSize: '16px', color: '#666', textDecoration: 'line-through' }}>{formatPrice(deal.avgPrice)}</span>
         </div>
 
-        {/* Savings Box */}
+        {/* Savings */}
         <div style={{
-          background: 'rgba(34,197,94,0.1)',
-          border: '1px solid rgba(34,197,94,0.2)',
-          borderRadius: '10px',
-          padding: '12px',
+          background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)',
+          borderRadius: '12px', padding: '14px', marginBottom: '16px',
         }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
-            <span style={{ fontSize: '12px', color: '#9ca3af' }}>💰 Ahorrás</span>
-            <span style={{ fontSize: '18px', fontWeight: 'bold', color: '#22c55e' }}>{formatPrice(savings)}</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+            <span style={{ fontSize: '13px', color: '#9ca3af' }}>💰 Ahorrás</span>
+            <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#22c55e' }}>{formatPrice(savings)}</span>
           </div>
-          <div style={{ background: '#1a1a1a', borderRadius: '4px', height: '6px', overflow: 'hidden' }}>
+          <div style={{ background: '#1a1a1a', borderRadius: '6px', height: '8px', overflow: 'hidden' }}>
             <div style={{
-              height: '100%',
-              width: `${Math.min(deal.discount * 2.5, 100)}%`,
+              height: '100%', width: `${Math.min(deal.discount * 2.5, 100)}%`,
               background: `linear-gradient(90deg, ${scoreInfo.color}, ${scoreInfo.color}aa)`,
-              borderRadius: '4px',
+              borderRadius: '6px',
             }} />
           </div>
-          <p style={{ fontSize: '11px', color: '#6b7280', margin: '6px 0 0 0', textAlign: 'right' }}>
-            {deal.discount}% menos que el promedio
-          </p>
+          <p style={{ fontSize: '12px', color: '#666', margin: '8px 0 0 0', textAlign: 'right' }}>{deal.discount}% menos que el promedio</p>
         </div>
 
         {/* CTA */}
         <a href={deal.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
           <button style={{
-            width: '100%',
-            padding: '16px',
-            borderRadius: '12px',
-            border: 'none',
+            width: '100%', padding: '18px', borderRadius: '14px', border: 'none',
             background: 'linear-gradient(135deg, #22c55e, #06b6d4)',
-            color: '#000',
-            fontSize: '15px',
-            fontWeight: 'bold',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: '8px',
-          }}>
-            Ver en {store.name} →
-          </button>
+            color: '#000', fontSize: '16px', fontWeight: 'bold', cursor: 'pointer',
+          }}>Ver en {store.name} →</button>
         </a>
       </div>
     </div>
@@ -287,24 +255,131 @@ const DealCard = ({ deal, isPreview = false }) => {
 };
 
 // ============================================
+// HOW IT WORKS MODAL
+// ============================================
+const HowItWorksModal = ({ onClose }) => (
+  <div onClick={onClose} style={{
+    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 100,
+    display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
+  }}>
+    <div onClick={e => e.stopPropagation()} style={{
+      background: '#111', borderRadius: '20px', maxWidth: '450px', width: '100%',
+      padding: '28px', border: '1px solid #222',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h2 style={{ fontSize: '22px', fontWeight: 'bold', margin: 0, color: 'white' }}>¿Cómo funciona?</h2>
+        <button onClick={onClose} style={{
+          background: '#222', border: 'none', color: '#fff', width: '36px', height: '36px',
+          borderRadius: '10px', cursor: 'pointer', fontSize: '18px',
+        }}>✕</button>
+      </div>
+      
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+          <div style={{ width: '44px', height: '44px', background: '#1a1a1a', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>🔍</div>
+          <div>
+            <h4 style={{ color: 'white', fontSize: '15px', margin: '0 0 4px 0', fontWeight: '600' }}>Curamos ofertas</h4>
+            <p style={{ color: '#888', fontSize: '13px', margin: 0, lineHeight: 1.5 }}>Buscamos los mejores precios en tecnología de Argentina todos los días.</p>
+          </div>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+          <div style={{ width: '44px', height: '44px', background: '#1a1a1a', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>📊</div>
+          <div>
+            <h4 style={{ color: 'white', fontSize: '15px', margin: '0 0 4px 0', fontWeight: '600' }}>Verificamos el descuento</h4>
+            <p style={{ color: '#888', fontSize: '13px', margin: 0, lineHeight: 1.5 }}>Comparamos contra el precio promedio de los últimos 30 días. Sin humo.</p>
+          </div>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+          <div style={{ width: '44px', height: '44px', background: '#1a1a1a', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>🛒</div>
+          <div>
+            <h4 style={{ color: 'white', fontSize: '15px', margin: '0 0 4px 0', fontWeight: '600' }}>Vos decidís</h4>
+            <p style={{ color: '#888', fontSize: '13px', margin: 0, lineHeight: 1.5 }}>Si te convence, hacé click y comprá directo en la tienda oficial.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div style={{
+        marginTop: '24px', padding: '16px', background: 'rgba(34,197,94,0.1)',
+        borderRadius: '12px', border: '1px solid rgba(34,197,94,0.2)',
+      }}>
+        <p style={{ color: '#4ade80', fontSize: '13px', margin: 0, textAlign: 'center' }}>
+          💡 Es 100% gratis y sin costo extra para vos
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
+// ============================================
+// LEGAL MODAL
+// ============================================
+const LegalModal = ({ type, onClose }) => (
+  <div onClick={onClose} style={{
+    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 100,
+    display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
+  }}>
+    <div onClick={e => e.stopPropagation()} style={{
+      background: '#111', borderRadius: '16px', maxWidth: '500px', maxHeight: '80vh',
+      overflow: 'auto', padding: '24px', border: '1px solid #222',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: 'bold', margin: 0 }}>
+          {type === 'terminos' ? 'Términos y Condiciones' : 'Política de Privacidad'}
+        </h2>
+        <button onClick={onClose} style={{
+          background: '#222', border: 'none', color: '#fff', width: '32px', height: '32px',
+          borderRadius: '8px', cursor: 'pointer', fontSize: '16px',
+        }}>✕</button>
+      </div>
+      <p style={{ color: '#666', fontSize: '12px', marginBottom: '20px' }}>Última actualización: Enero 2025</p>
+      
+      {type === 'terminos' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>1. Sobre NerDeals</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals es un servicio de curaduría de ofertas tecnológicas en Argentina. No vendemos productos ni intermediamos ventas.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>2. Enlaces de afiliados</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Participamos en programas de afiliados. Los clicks pueden generar comisiones sin costo adicional para vos.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>3. Precios</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Los precios son referenciales y pueden cambiar. Verificá siempre en el sitio del vendedor.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>4. Responsabilidad</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>No somos responsables por transacciones con terceros, calidad de productos, envíos o reclamos.</p></div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>1. Datos recopilados</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Recopilamos información anónima de navegación para mejorar el servicio.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>2. Cookies</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Usamos cookies para análisis y seguimiento de afiliados.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>3. Enlaces externos</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Los enlaces llevan a sitios con sus propias políticas de privacidad.</p></div>
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+// ============================================
 // MAIN APP
 // ============================================
 export default function App() {
   const [activeCategory, setActiveCategory] = useState('top');
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
   const [legalModal, setLegalModal] = useState(null);
   const [touchStart, setTouchStart] = useState(null);
   const [touchEnd, setTouchEnd] = useState(null);
 
-  // Get deals for current category
-  const getDeals = () => {
-    if (activeCategory === 'top') {
-      return [...dealsData].sort((a, b) => b.discount - a.discount);
+  // Get filtered deals
+  const deals = useMemo(() => {
+    let filtered = activeCategory === 'top' 
+      ? [...dealsData].sort((a, b) => b.discount - a.discount)
+      : dealsData.filter(d => d.category === activeCategory);
+    
+    if (searchTerm) {
+      filtered = filtered.filter(d => 
+        d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        d.brand.toLowerCase().includes(searchTerm.toLowerCase())
+      );
     }
-    return dealsData.filter(d => d.category === activeCategory);
-  };
+    return filtered;
+  }, [activeCategory, searchTerm]);
 
-  const deals = getDeals();
   const currentDeal = deals[currentIndex];
   const prevDeal = deals[currentIndex - 1];
   const nextDeal = deals[currentIndex + 1];
@@ -313,22 +388,16 @@ export default function App() {
   // Navigation
   const goNext = () => currentIndex < deals.length - 1 && setCurrentIndex(currentIndex + 1);
   const goPrev = () => currentIndex > 0 && setCurrentIndex(currentIndex - 1);
+  const changeCategory = (catId) => { setActiveCategory(catId); setCurrentIndex(0); setSearchTerm(''); };
 
-  // Category change
-  const changeCategory = (catId) => {
-    setActiveCategory(catId);
-    setCurrentIndex(0);
-  };
-
-  // Swipe handlers
-  const minSwipeDistance = 50;
+  // Swipe
   const onTouchStart = (e) => { setTouchEnd(null); setTouchStart(e.targetTouches[0].clientX); };
   const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
   const onTouchEnd = () => {
     if (!touchStart || !touchEnd) return;
     const distance = touchStart - touchEnd;
-    if (distance > minSwipeDistance) goNext();
-    if (distance < -minSwipeDistance) goPrev();
+    if (distance > 50) goNext();
+    if (distance < -50) goPrev();
   };
 
   // Keyboard
@@ -342,265 +411,164 @@ export default function App() {
   });
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: '#000',
-      color: 'white',
-      fontFamily: 'system-ui, -apple-system, sans-serif',
-      display: 'flex',
-      flexDirection: 'column',
-    }}>
+    <div style={{ minHeight: '100vh', background: '#000', color: 'white', fontFamily: 'system-ui, -apple-system, sans-serif', display: 'flex', flexDirection: 'column' }}>
+      
       {/* HEADER */}
-      <header style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '12px 16px',
-        borderBottom: '1px solid #1a1a1a',
-      }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <div style={{
-            width: '36px', height: '36px',
-            background: 'linear-gradient(135deg, #4ade80, #06b6d4)',
-            borderRadius: '10px',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: '900', fontSize: '18px', color: '#000'
-          }}>N</div>
-          <span style={{ fontSize: '20px', fontWeight: 'bold' }}>
-            Ner<span style={{ color: '#4ade80' }}>Deals</span>
-          </span>
+      <header style={{ borderBottom: '1px solid #1a1a1a', padding: '12px 20px' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px', flexWrap: 'wrap' }}>
+          {/* Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '38px', height: '38px', background: 'linear-gradient(135deg, #4ade80, #06b6d4)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', fontSize: '20px', color: '#000' }}>N</div>
+            <span style={{ fontSize: '22px', fontWeight: 'bold' }}>Ner<span style={{ color: '#4ade80' }}>Deals</span></span>
+          </div>
+
+          {/* Search */}
+          <div style={{ flex: 1, maxWidth: '400px', minWidth: '200px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', background: '#111', borderRadius: '12px', padding: '10px 16px', gap: '10px', border: '1px solid #222' }}>
+              <span style={{ color: '#666' }}>🔍</span>
+              <input 
+                type="text" 
+                placeholder="Buscar ofertas..." 
+                value={searchTerm}
+                onChange={e => { setSearchTerm(e.target.value); setCurrentIndex(0); }}
+                style={{ background: 'transparent', border: 'none', outline: 'none', color: 'white', fontSize: '14px', width: '100%' }}
+              />
+            </div>
+          </div>
+
+          {/* Actions */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button onClick={() => setShowHowItWorks(true)} style={{ background: '#111', border: '1px solid #222', borderRadius: '10px', padding: '10px 14px', color: '#fff', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>❓</span><span className="hide-mobile">¿Cómo funciona?</span>
+            </button>
+            <a href="https://forms.gle/Jk2QGcXYH3UGujuY7" target="_blank" rel="noopener noreferrer" style={{ background: '#111', border: '1px solid #222', borderRadius: '10px', padding: '10px 14px', color: '#fff', fontSize: '13px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>🏪</span><span className="hide-mobile">Comercios</span>
+            </a>
+            <a href="https://forms.gle/F9feFAC2i2f67BsN8" target="_blank" rel="noopener noreferrer" style={{ background: '#111', border: '1px solid #222', borderRadius: '10px', padding: '10px 14px', color: '#fff', fontSize: '13px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>💬</span><span className="hide-mobile">Feedback</span>
+            </a>
+            <a href="https://cafecito.app/nerdeals" target="_blank" rel="noopener noreferrer" style={{ background: 'linear-gradient(135deg, #6f4e37, #8B4513)', borderRadius: '10px', padding: '10px 16px', color: '#fff', fontSize: '13px', fontWeight: '600', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>☕</span><span className="hide-mobile">Apoyar</span>
+            </a>
+          </div>
         </div>
-        <a href="https://cafecito.app/nerdeals" target="_blank" rel="noopener noreferrer" style={{
-          display: 'flex', alignItems: 'center', gap: '6px',
-          background: '#1a1a1a', padding: '8px 14px', borderRadius: '20px',
-          color: '#d4a574', fontSize: '13px', fontWeight: '600', textDecoration: 'none',
-        }}>☕ Apoyar</a>
       </header>
 
       {/* CATEGORIES */}
-      <div style={{
-        display: 'flex',
-        gap: '6px',
-        padding: '12px 16px',
-        overflowX: 'auto',
-        borderBottom: '1px solid #1a1a1a',
-      }}>
-        {categories.map(cat => (
-          <button
-            key={cat.id}
-            onClick={() => changeCategory(cat.id)}
-            style={{
-              display: 'flex', alignItems: 'center', gap: '6px',
-              padding: '8px 14px',
-              borderRadius: '20px',
-              border: activeCategory === cat.id ? `2px solid ${cat.color}` : '2px solid transparent',
-              background: activeCategory === cat.id ? `${cat.color}15` : '#111',
-              cursor: 'pointer',
-              whiteSpace: 'nowrap',
-              transition: 'all 0.2s',
-            }}
-          >
-            <span style={{ fontSize: '16px' }}>{cat.emoji}</span>
-            <span style={{ fontSize: '13px', fontWeight: '600', color: activeCategory === cat.id ? cat.color : '#888' }}>{cat.name}</span>
-          </button>
-        ))}
+      <div style={{ borderBottom: '1px solid #1a1a1a', padding: '12px 20px', overflowX: 'auto' }}>
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', minWidth: 'max-content' }}>
+          {categories.map(cat => (
+            <button
+              key={cat.id}
+              onClick={() => changeCategory(cat.id)}
+              style={{
+                display: 'flex', alignItems: 'center', gap: '8px',
+                padding: '10px 18px', borderRadius: '25px',
+                border: activeCategory === cat.id ? `2px solid ${cat.color}` : '2px solid transparent',
+                background: activeCategory === cat.id ? `${cat.color}15` : '#111',
+                cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s',
+              }}
+            >
+              <span style={{ fontSize: '16px' }}>{cat.emoji}</span>
+              <span style={{ fontSize: '14px', fontWeight: '600', color: activeCategory === cat.id ? cat.color : '#888' }}>{cat.name}</span>
+            </button>
+          ))}
+        </div>
       </div>
 
-      {/* CATEGORY TITLE + COUNTER */}
-      <div style={{ textAlign: 'center', padding: '16px 16px 8px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-          <span style={{ fontSize: '24px' }}>{category?.emoji}</span>
-          <span style={{ fontSize: '20px', fontWeight: '700', color: category?.color }}>{category?.name}</span>
+      {/* CATEGORY TITLE */}
+      <div style={{ textAlign: 'center', padding: '20px 16px 12px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '28px' }}>{category?.emoji}</span>
+          <span style={{ fontSize: '24px', fontWeight: '700', color: category?.color }}>{category?.name}</span>
         </div>
-        <p style={{ fontSize: '13px', color: '#666', margin: '6px 0 0 0' }}>
-          Oferta {currentIndex + 1} de {deals.length}
+        <p style={{ fontSize: '14px', color: '#666', margin: '8px 0 0 0' }}>
+          {searchTerm ? `${deals.length} resultados para "${searchTerm}"` : `Oferta ${currentIndex + 1} de ${deals.length}`}
         </p>
       </div>
 
-      {/* MAIN CAROUSEL */}
+      {/* CAROUSEL */}
       <div 
-        style={{
-          flex: 1,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '16px',
-          gap: '16px',
-          overflow: 'hidden',
-        }}
+        style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px 20px', gap: '20px' }}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
       >
-        {/* Previous Preview - Desktop only */}
-        <div style={{
-          width: '140px',
-          height: '280px',
-          flexShrink: 0,
-          display: 'none',
-          '@media (min-width: 768px)': { display: 'block' },
-        }} className="desktop-only">
-          {prevDeal ? <DealCard deal={prevDeal} isPreview /> : <div style={{ width: '100%', height: '100%' }} />}
+        {/* Prev Card - Desktop */}
+        <div className="desktop-only" style={{ display: 'none' }}>
+          <PreviewCard deal={prevDeal} onClick={goPrev} />
         </div>
 
         {/* Arrow Left */}
-        <button
-          onClick={goPrev}
-          disabled={currentIndex === 0}
-          style={{
-            width: '44px', height: '44px',
-            borderRadius: '50%',
-            border: 'none',
-            background: currentIndex === 0 ? '#111' : '#222',
-            color: currentIndex === 0 ? '#333' : '#fff',
-            fontSize: '18px',
-            cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
-            flexShrink: 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-        >←</button>
+        <button onClick={goPrev} disabled={currentIndex === 0} style={{
+          width: '50px', height: '50px', borderRadius: '50%', border: 'none',
+          background: currentIndex === 0 ? '#111' : '#222',
+          color: currentIndex === 0 ? '#333' : '#fff',
+          fontSize: '20px', cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
+          flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>←</button>
 
         {/* Main Card */}
-        <div style={{ flex: 1, display: 'flex', justifyContent: 'center', maxWidth: '400px' }}>
-          {currentDeal && <DealCard deal={currentDeal} />}
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          {currentDeal ? <MainCard deal={currentDeal} /> : (
+            <div style={{ padding: '40px', textAlign: 'center', color: '#666' }}>
+              <p style={{ fontSize: '48px', margin: '0 0 16px 0' }}>🔍</p>
+              <p style={{ fontSize: '16px', margin: 0 }}>No hay ofertas para mostrar</p>
+            </div>
+          )}
         </div>
 
         {/* Arrow Right */}
-        <button
-          onClick={goNext}
-          disabled={currentIndex === deals.length - 1}
-          style={{
-            width: '44px', height: '44px',
-            borderRadius: '50%',
-            border: 'none',
-            background: currentIndex === deals.length - 1 ? '#111' : '#222',
-            color: currentIndex === deals.length - 1 ? '#333' : '#fff',
-            fontSize: '18px',
-            cursor: currentIndex === deals.length - 1 ? 'not-allowed' : 'pointer',
-            flexShrink: 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-        >→</button>
+        <button onClick={goNext} disabled={currentIndex === deals.length - 1} style={{
+          width: '50px', height: '50px', borderRadius: '50%', border: 'none',
+          background: currentIndex === deals.length - 1 ? '#111' : '#222',
+          color: currentIndex === deals.length - 1 ? '#333' : '#fff',
+          fontSize: '20px', cursor: currentIndex === deals.length - 1 ? 'not-allowed' : 'pointer',
+          flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        }}>→</button>
 
-        {/* Next Preview - Desktop only */}
-        <div style={{
-          width: '140px',
-          height: '280px',
-          flexShrink: 0,
-          display: 'none',
-        }} className="desktop-only">
-          {nextDeal ? <DealCard deal={nextDeal} isPreview /> : <div style={{ width: '100%', height: '100%' }} />}
+        {/* Next Card - Desktop */}
+        <div className="desktop-only" style={{ display: 'none' }}>
+          <PreviewCard deal={nextDeal} onClick={goNext} />
         </div>
       </div>
 
       {/* DOTS */}
-      <div style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '6px',
-        padding: '8px 16px',
-      }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '12px 16px' }}>
         {deals.slice(0, 10).map((_, i) => (
-          <button
-            key={i}
-            onClick={() => setCurrentIndex(i)}
-            style={{
-              width: i === currentIndex ? '20px' : '8px',
-              height: '8px',
-              borderRadius: '4px',
-              background: i === currentIndex ? category?.color : '#333',
-              border: 'none',
-              cursor: 'pointer',
-              transition: 'all 0.2s',
-            }}
-          />
+          <button key={i} onClick={() => setCurrentIndex(i)} style={{
+            width: i === currentIndex ? '24px' : '8px', height: '8px', borderRadius: '4px',
+            background: i === currentIndex ? category?.color : '#333',
+            border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+          }} />
         ))}
-        {deals.length > 10 && (
-          <span style={{ fontSize: '11px', color: '#666', marginLeft: '4px' }}>+{deals.length - 10}</span>
-        )}
+        {deals.length > 10 && <span style={{ fontSize: '11px', color: '#666', marginLeft: '6px' }}>+{deals.length - 10} más</span>}
       </div>
 
       {/* FOOTER */}
-      <footer style={{
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flexWrap: 'wrap',
-        gap: '16px',
-        padding: '16px',
-        borderTop: '1px solid #1a1a1a',
-      }}>
-        <button onClick={() => setLegalModal('terminos')} style={{ background: 'none', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer' }}>Términos</button>
-        <button onClick={() => setLegalModal('privacidad')} style={{ background: 'none', border: 'none', color: '#666', fontSize: '12px', cursor: 'pointer' }}>Privacidad</button>
-        <a href="https://twitter.com/nerdeals" target="_blank" rel="noopener noreferrer" style={{ color: '#666', fontSize: '12px', textDecoration: 'none' }}>Twitter</a>
-        <a href="https://cafecito.app/nerdeals" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a574', fontSize: '12px', textDecoration: 'none' }}>☕ Cafecito</a>
+      <footer style={{ borderTop: '1px solid #1a1a1a', padding: '16px 20px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '20px' }}>
+          <button onClick={() => setLegalModal('terminos')} style={{ background: 'none', border: 'none', color: '#666', fontSize: '13px', cursor: 'pointer' }}>Términos</button>
+          <button onClick={() => setLegalModal('privacidad')} style={{ background: 'none', border: 'none', color: '#666', fontSize: '13px', cursor: 'pointer' }}>Privacidad</button>
+          <a href="https://twitter.com/nerdeals" target="_blank" rel="noopener noreferrer" style={{ color: '#666', fontSize: '13px', textDecoration: 'none' }}>Twitter</a>
+          <a href="https://cafecito.app/nerdeals" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a574', fontSize: '13px', textDecoration: 'none' }}>☕ Cafecito</a>
+        </div>
+        <p style={{ textAlign: 'center', color: '#444', fontSize: '11px', margin: '12px 0 0 0' }}>
+          NerDeals © 2025 · Precios referenciales · Los enlaces pueden generar comisiones sin costo extra
+        </p>
       </footer>
 
-      {/* LEGAL MODAL */}
-      {legalModal && (
-        <div onClick={() => setLegalModal(null)} style={{
-          position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 100,
-          display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
-        }}>
-          <div onClick={e => e.stopPropagation()} style={{
-            background: '#111', borderRadius: '16px', maxWidth: '500px', maxHeight: '80vh',
-            overflow: 'auto', padding: '24px', border: '1px solid #222',
-          }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-              <h2 style={{ fontSize: '20px', fontWeight: 'bold', margin: 0 }}>
-                {legalModal === 'terminos' ? 'Términos y Condiciones' : 'Política de Privacidad'}
-              </h2>
-              <button onClick={() => setLegalModal(null)} style={{
-                background: '#222', border: 'none', color: '#fff', width: '32px', height: '32px',
-                borderRadius: '8px', cursor: 'pointer', fontSize: '16px',
-              }}>✕</button>
-            </div>
-            <p style={{ color: '#666', fontSize: '12px', marginBottom: '20px' }}>Última actualización: Enero 2025</p>
-            
-            {legalModal === 'terminos' ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div>
-                  <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>1. Sobre NerDeals</h4>
-                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals es un servicio de curaduría de ofertas tecnológicas en Argentina. No vendemos productos ni intermediamos ventas.</p>
-                </div>
-                <div>
-                  <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>2. Enlaces de afiliados</h4>
-                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Participamos en programas de afiliados. Los clicks pueden generar comisiones sin costo adicional para vos.</p>
-                </div>
-                <div>
-                  <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>3. Precios</h4>
-                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Los precios son referenciales y pueden cambiar. Verificá siempre en el sitio del vendedor.</p>
-                </div>
-                <div>
-                  <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>4. Responsabilidad</h4>
-                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>No somos responsables por transacciones con terceros, calidad de productos, envíos o reclamos.</p>
-                </div>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div>
-                  <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>1. Datos recopilados</h4>
-                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Recopilamos información anónima de navegación para mejorar el servicio.</p>
-                </div>
-                <div>
-                  <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>2. Cookies</h4>
-                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Usamos cookies para análisis y seguimiento de afiliados.</p>
-                </div>
-                <div>
-                  <h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>3. Enlaces externos</h4>
-                  <p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Los enlaces llevan a sitios con sus propias políticas de privacidad.</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
+      {/* MODALS */}
+      {showHowItWorks && <HowItWorksModal onClose={() => setShowHowItWorks(false)} />}
+      {legalModal && <LegalModal type={legalModal} onClose={() => setLegalModal(null)} />}
 
-      {/* CSS for desktop preview */}
+      {/* CSS */}
       <style>{`
-        @media (min-width: 900px) {
+        @media (min-width: 1024px) {
           .desktop-only { display: block !important; }
+        }
+        @media (max-width: 768px) {
+          .hide-mobile { display: none !important; }
         }
       `}</style>
     </div>
