@@ -1,1151 +1,773 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 
 // ============================================
-// 🎮 NERDEALS V2 ULTIMATE
-// Gen Z + Gamers + Maximum FOMO + Conversión
+// CATEGORÍAS
 // ============================================
-
-// DEALS DATA - Actualizar con ofertas reales
-const DEALS = [
-  {
-    id: 1,
-    brand: "LOGITECH",
-    title: "G502 X LIGHTSPEED",
-    subtitle: "Mouse Gaming Inalámbrico",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_931148-MLU72534824393_102023-F.webp",
-    currentPrice: 89000,
-    originalPrice: 145000,
-    discount: 39,
-    score: 9.8,
-    store: "meli",
-    category: "gaming",
-    url: "https://mercadolibre.com.ar/g502x",
-    isHot: true,
-    isLowest: true,
-    stock: "low", // low, medium, high
-    votes: 2847,
-    timeAgo: "2h",
-    freeShipping: true,
-    tags: ["⚡ ÉPICA", "🏆 #1 GAMING"]
-  },
-  {
-    id: 2,
-    brand: "SONY",
-    title: "WH-1000XM5",
-    subtitle: "Auriculares Noise Cancelling",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_869657-MLA71783191498_092023-F.webp",
-    currentPrice: 380000,
-    originalPrice: 520000,
-    discount: 27,
-    score: 9.2,
-    store: "meli",
-    category: "audio",
-    url: "https://mercadolibre.com.ar/xm5",
-    isHot: true,
-    isLowest: false,
-    stock: "medium",
-    votes: 1923,
-    timeAgo: "5h",
-    freeShipping: true,
-    tags: ["🎧 MEJOR ANC"]
-  },
-  {
-    id: 3,
-    brand: "APPLE",
-    title: "AirPods Pro 2",
-    subtitle: "USB-C + Adaptive Audio",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_745620-MLA72527447836_102023-F.webp",
-    currentPrice: 320000,
-    originalPrice: 420000,
-    discount: 24,
-    score: 9.0,
-    store: "meli",
-    category: "apple",
-    url: "https://mercadolibre.com.ar/airpods",
-    isHot: false,
-    isLowest: true,
-    stock: "low",
-    votes: 3241,
-    timeAgo: "1h",
-    freeShipping: true,
-    tags: ["🍎 APPLE", "📉 MÍNIMO"]
-  },
-  {
-    id: 4,
-    brand: "ASUS",
-    title: "RTX 4060 DUAL OC",
-    subtitle: "8GB GDDR6 - Ray Tracing",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_652706-MLA54858949498_042023-F.webp",
-    currentPrice: 485000,
-    originalPrice: 629000,
-    discount: 23,
-    score: 8.5,
-    store: "meli",
-    category: "gaming",
-    url: "https://mercadolibre.com.ar/rtx4060",
-    isHot: false,
-    isLowest: false,
-    stock: "high",
-    votes: 892,
-    timeAgo: "8h",
-    freeShipping: true,
-    tags: ["🎮 GPU"]
-  },
-  {
-    id: 5,
-    brand: "AMAZON",
-    title: "Fire TV Stick 4K Max",
-    subtitle: "WiFi 6E + Alexa Voice",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_876543-MLA71234567890_092023-F.webp",
-    currentPrice: 42000,
-    originalPrice: 65000,
-    discount: 35,
-    score: 9.5,
-    store: "meli",
-    category: "stream",
-    url: "https://mercadolibre.com.ar/firestick",
-    isHot: true,
-    isLowest: true,
-    stock: "low",
-    votes: 4521,
-    timeAgo: "30m",
-    freeShipping: false,
-    tags: ["⚡ ÉPICA", "📺 SMART"]
-  },
-  {
-    id: 6,
-    brand: "SAMSUNG",
-    title: "Galaxy S24 Ultra",
-    subtitle: "256GB - AI Features",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_928294-MLA72604618538_112023-F.webp",
-    currentPrice: 1850000,
-    originalPrice: 2200000,
-    discount: 16,
-    score: 8.0,
-    store: "meli",
-    category: "mobile",
-    url: "https://mercadolibre.com.ar/s24ultra",
-    isHot: false,
-    isLowest: false,
-    stock: "high",
-    votes: 1247,
-    timeAgo: "12h",
-    freeShipping: true,
-    tags: ["📱 FLAGSHIP"]
-  },
-  {
-    id: 7,
-    brand: "REDRAGON",
-    title: "K530 DRACONIC",
-    subtitle: "Teclado 60% RGB Hot-Swap",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_746651-MLA50099406953_052022-F.webp",
-    currentPrice: 45900,
-    originalPrice: 68000,
-    discount: 32,
-    score: 8.8,
-    store: "meli",
-    category: "gaming",
-    url: "https://mercadolibre.com.ar/k530",
-    isHot: true,
-    isLowest: false,
-    stock: "medium",
-    votes: 2156,
-    timeAgo: "4h",
-    freeShipping: false,
-    tags: ["⌨️ MECÁNICO"]
-  },
-  {
-    id: 8,
-    brand: "SECRETLAB",
-    title: "TITAN Evo 2024",
-    subtitle: "Silla Gaming Ergonómica",
-    image: "https://http2.mlstatic.com/D_NQ_NP_2X_997561-MLA48049028812_102021-F.webp",
-    currentPrice: 890000,
-    originalPrice: 1200000,
-    discount: 26,
-    score: 9.1,
-    store: "meli",
-    category: "gaming",
-    url: "https://mercadolibre.com.ar/titan",
-    isHot: false,
-    isLowest: true,
-    stock: "low",
-    votes: 743,
-    timeAgo: "6h",
-    freeShipping: true,
-    tags: ["🪑 PRO", "📉 MÍNIMO"]
-  }
+const categories = [
+  { id: 'top', name: 'TOP', emoji: '🔥', color: '#f97316' },
+  { id: 'gaming', name: 'Gaming', emoji: '🎮', color: '#8b5cf6' },
+  { id: 'pc', name: 'PC', emoji: '💻', color: '#3b82f6' },
+  { id: 'mobile', name: 'Mobile', emoji: '📱', color: '#10b981' },
+  { id: 'apple', name: 'Apple', emoji: '🍎', color: '#f43f5e' },
+  { id: 'office', name: 'Office', emoji: '🏠', color: '#6366f1' },
+  { id: 'streaming', name: 'Stream', emoji: '📺', color: '#f97316' },
+  { id: 'audio', name: 'Audio', emoji: '🎧', color: '#ec4899' },
+  { id: 'subs', name: 'Subs', emoji: '🎫', color: '#a855f7' },
+  { id: 'geek', name: 'Geek', emoji: '👾', color: '#eab308' },
 ];
 
-const CATEGORIES = [
-  { id: 'all', name: 'TODO', emoji: '🔥', color: '#ff6b35' },
-  { id: 'gaming', name: 'GAMING', emoji: '🎮', color: '#bf5af2' },
-  { id: 'audio', name: 'AUDIO', emoji: '🎧', color: '#ff2d55' },
-  { id: 'mobile', name: 'MOBILE', emoji: '📱', color: '#30d158' },
-  { id: 'apple', name: 'APPLE', emoji: '🍎', color: '#007aff' },
-  { id: 'pc', name: 'PC', emoji: '💻', color: '#5e5ce6' },
-  { id: 'stream', name: 'STREAM', emoji: '📺', color: '#ff9500' },
+// ============================================
+// OFERTAS
+// ============================================
+const dealsData = [
+  // GAMING
+  { id: 1, name: "Mouse Inalámbrico Lightspeed", brand: "Logitech G502 X", image: "https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=800&h=600&fit=crop", currentPrice: 89000, avgPrice: 145000, discount: 39, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "gaming", publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+  { id: 2, name: "RTX 4060 8GB GDDR6", brand: "ASUS Dual", image: "https://images.unsplash.com/photo-1591488320449-011701bb6704?w=800&h=600&fit=crop", currentPrice: 485000, avgPrice: 629000, discount: 23, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "gaming", publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000) },
+  { id: 3, name: "Teclado Mecánico RGB Hot-Swap", brand: "Redragon K530", image: "https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?w=800&h=600&fit=crop", currentPrice: 45900, avgPrice: 62000, discount: 26, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "gaming", publishedAt: new Date(Date.now() - 8 * 60 * 60 * 1000) },
+  { id: 4, name: "Silla Gamer Ergonómica", brand: "Cougar Armor", image: "https://images.unsplash.com/photo-1598550476439-6847785fcea6?w=800&h=600&fit=crop", currentPrice: 289000, avgPrice: 380000, discount: 24, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "gaming", publishedAt: new Date(Date.now() - 12 * 60 * 60 * 1000) },
+  { id: 5, name: "Gamepad Inalámbrico", brand: "Xbox Series", image: "https://images.unsplash.com/photo-1605901309584-818e25960a8f?w=800&h=600&fit=crop", currentPrice: 65000, avgPrice: 95000, discount: 32, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "gaming", publishedAt: new Date(Date.now() - 3 * 60 * 60 * 1000) },
+
+  // PC
+  { id: 6, name: "Notebook 15.6\" Ryzen 5 16GB", brand: "Lenovo IdeaPad", image: "https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=800&h=600&fit=crop", currentPrice: 650000, avgPrice: 850000, discount: 24, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "pc", publishedAt: new Date(Date.now() - 1 * 60 * 60 * 1000) },
+  { id: 7, name: "SSD NVMe 1TB Gen4", brand: "Samsung 990 PRO", image: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=800&h=600&fit=crop", currentPrice: 142000, avgPrice: 189000, discount: 25, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "pc", publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000) },
+  { id: 8, name: "RAM DDR5 32GB 5600MHz", brand: "Corsair Vengeance", image: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=800&h=600&fit=crop", currentPrice: 125000, avgPrice: 178000, discount: 30, store: "megatone", url: "https://megatone.net", stock: "available", category: "pc", publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000) },
+  { id: 9, name: "Procesador Ryzen 7 5800X", brand: "AMD", image: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=800&h=600&fit=crop", currentPrice: 320000, avgPrice: 420000, discount: 24, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "pc", publishedAt: new Date(Date.now() - 10 * 60 * 60 * 1000) },
+  { id: 10, name: "Monitor 27\" 144Hz IPS", brand: "LG UltraGear", image: "https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&h=600&fit=crop", currentPrice: 289000, avgPrice: 385000, discount: 25, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "pc", publishedAt: new Date(Date.now() - 7 * 60 * 60 * 1000) },
+
+  // MOBILE
+  { id: 11, name: "Galaxy S23 Ultra 256GB", brand: "Samsung", image: "https://images.unsplash.com/photo-1610945415295-d9bbf067e59c?w=800&h=600&fit=crop", currentPrice: 1200000, avgPrice: 1550000, discount: 23, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "mobile", publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+  { id: 12, name: "Cargador Inalámbrico 15W", brand: "Anker", image: "https://images.unsplash.com/photo-1622675272481-38a38c238cf1?w=800&h=600&fit=crop", currentPrice: 25000, avgPrice: 38000, discount: 34, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "mobile", publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000) },
+  { id: 13, name: "Redmi Note 13 Pro 256GB", brand: "Xiaomi", image: "https://images.unsplash.com/photo-1598327105666-5b89351aff97?w=800&h=600&fit=crop", currentPrice: 320000, avgPrice: 420000, discount: 24, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "mobile", publishedAt: new Date(Date.now() - 9 * 60 * 60 * 1000) },
+  { id: 14, name: "Power Bank 20000mAh 65W", brand: "Baseus", image: "https://images.unsplash.com/photo-1609091839311-d5365f9ff1c5?w=800&h=600&fit=crop", currentPrice: 55000, avgPrice: 75000, discount: 27, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "mobile", publishedAt: new Date(Date.now() - 11 * 60 * 60 * 1000) },
+  { id: 15, name: "Moto G54 5G 256GB", brand: "Motorola", image: "https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=800&h=600&fit=crop", currentPrice: 280000, avgPrice: 350000, discount: 20, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "mobile", publishedAt: new Date(Date.now() - 14 * 60 * 60 * 1000) },
+
+  // APPLE
+  { id: 16, name: "AirPods Pro 2da Gen", brand: "Apple", image: "https://images.unsplash.com/photo-1606841837239-c5a1a4a07af7?w=800&h=600&fit=crop", currentPrice: 320000, avgPrice: 420000, discount: 24, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "apple", publishedAt: new Date(Date.now() - 3 * 60 * 60 * 1000) },
+  { id: 17, name: "iPad 10.9\" 64GB WiFi", brand: "Apple", image: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?w=800&h=600&fit=crop", currentPrice: 580000, avgPrice: 750000, discount: 23, store: "garbarino", url: "https://garbarino.com", stock: "low", category: "apple", publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000) },
+  { id: 18, name: "Apple Watch Series 9", brand: "Apple", image: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=800&h=600&fit=crop", currentPrice: 650000, avgPrice: 820000, discount: 21, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "apple", publishedAt: new Date(Date.now() - 8 * 60 * 60 * 1000) },
+  { id: 19, name: "Magic Keyboard Touch ID", brand: "Apple", image: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=800&h=600&fit=crop", currentPrice: 189000, avgPrice: 250000, discount: 24, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "apple", publishedAt: new Date(Date.now() - 15 * 60 * 60 * 1000) },
+  { id: 20, name: "Cable USB-C Lightning 2m", brand: "Apple Original", image: "https://images.unsplash.com/photo-1616410011236-7a42121dd981?w=800&h=600&fit=crop", currentPrice: 25000, avgPrice: 38000, discount: 34, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "apple", publishedAt: new Date(Date.now() - 20 * 60 * 60 * 1000) },
+
+  // OFFICE
+  { id: 21, name: "Webcam 4K Pro Streaming", brand: "Logitech Brio", image: "https://images.unsplash.com/photo-1587826080692-f439cd0b70da?w=800&h=600&fit=crop", currentPrice: 185000, avgPrice: 280000, discount: 34, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "office", publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000) },
+  { id: 22, name: "Escritorio Elevable", brand: "Flexispot", image: "https://images.unsplash.com/photo-1518455027359-f3f8164ba6bd?w=800&h=600&fit=crop", currentPrice: 420000, avgPrice: 580000, discount: 28, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "office", publishedAt: new Date(Date.now() - 7 * 60 * 60 * 1000) },
+  { id: 23, name: "Luz LED para Monitor", brand: "BenQ ScreenBar", image: "https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=800&h=600&fit=crop", currentPrice: 95000, avgPrice: 130000, discount: 27, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "office", publishedAt: new Date(Date.now() - 10 * 60 * 60 * 1000) },
+  { id: 24, name: "Hub USB-C 7 en 1", brand: "Anker", image: "https://images.unsplash.com/photo-1625723044792-44de16ccb4e9?w=800&h=600&fit=crop", currentPrice: 45000, avgPrice: 65000, discount: 31, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "office", publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+  { id: 25, name: "Silla Ergonómica Mesh", brand: "Ergocit", image: "https://images.unsplash.com/photo-1580480055273-228ff5388ef8?w=800&h=600&fit=crop", currentPrice: 290000, avgPrice: 400000, discount: 28, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "office", publishedAt: new Date(Date.now() - 13 * 60 * 60 * 1000) },
+
+  // STREAMING
+  { id: 26, name: "Fire TV Stick 4K Max", brand: "Amazon", image: "https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?w=800&h=600&fit=crop", currentPrice: 42000, avgPrice: 65000, discount: 35, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "streaming", publishedAt: new Date(Date.now() - 1 * 60 * 60 * 1000) },
+  { id: 27, name: "Smart TV 55\" 4K UHD", brand: "Samsung", image: "https://images.unsplash.com/photo-1593784991095-a205069470b6?w=800&h=600&fit=crop", currentPrice: 520000, avgPrice: 720000, discount: 28, store: "garbarino", url: "https://garbarino.com", stock: "available", category: "streaming", publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000) },
+  { id: 28, name: "Chromecast Google TV 4K", brand: "Google", image: "https://images.unsplash.com/photo-1611532736597-de2d4265fba3?w=800&h=600&fit=crop", currentPrice: 48000, avgPrice: 68000, discount: 29, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "streaming", publishedAt: new Date(Date.now() - 9 * 60 * 60 * 1000) },
+  { id: 29, name: "Soundbar 2.1 Bluetooth", brand: "JBL Bar", image: "https://images.unsplash.com/photo-1545454675-3531b543be5d?w=800&h=600&fit=crop", currentPrice: 180000, avgPrice: 250000, discount: 28, store: "megatone", url: "https://megatone.net", stock: "available", category: "streaming", publishedAt: new Date(Date.now() - 12 * 60 * 60 * 1000) },
+  { id: 30, name: "Proyector Full HD", brand: "Epson", image: "https://images.unsplash.com/photo-1626379953822-baec19c3accd?w=800&h=600&fit=crop", currentPrice: 450000, avgPrice: 620000, discount: 27, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "streaming", publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000) },
+
+  // AUDIO
+  { id: 31, name: "Auriculares Noise Cancelling", brand: "Sony WH-1000XM5", image: "https://images.unsplash.com/photo-1546435770-a3e426bf472b?w=800&h=600&fit=crop", currentPrice: 380000, avgPrice: 520000, discount: 27, store: "garbarino", url: "https://garbarino.com", stock: "low", category: "audio", publishedAt: new Date(Date.now() - 3 * 60 * 60 * 1000) },
+  { id: 32, name: "Parlante Bluetooth", brand: "JBL Flip 6", image: "https://images.unsplash.com/photo-1608043152269-423dbba4e7e1?w=800&h=600&fit=crop", currentPrice: 95000, avgPrice: 130000, discount: 27, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "audio", publishedAt: new Date(Date.now() - 8 * 60 * 60 * 1000) },
+  { id: 33, name: "Micrófono USB Streaming", brand: "Blue Yeti", image: "https://images.unsplash.com/photo-1590602847861-f357a9332bbc?w=800&h=600&fit=crop", currentPrice: 185000, avgPrice: 250000, discount: 26, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "audio", publishedAt: new Date(Date.now() - 11 * 60 * 60 * 1000) },
+  { id: 34, name: "Auriculares Gaming 7.1", brand: "HyperX Cloud III", image: "https://images.unsplash.com/photo-1618366712010-f4ae9c647dcb?w=800&h=600&fit=crop", currentPrice: 156000, avgPrice: 210000, discount: 26, store: "megatone", url: "https://megatone.net", stock: "available", category: "audio", publishedAt: new Date(Date.now() - 16 * 60 * 60 * 1000) },
+  { id: 35, name: "Earbuds True Wireless", brand: "Galaxy Buds2 Pro", image: "https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?w=800&h=600&fit=crop", currentPrice: 85000, avgPrice: 120000, discount: 29, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "audio", publishedAt: new Date(Date.now() - 4 * 60 * 60 * 1000) },
+
+  // SUBS
+  { id: 36, name: "PlayStation Plus 12 Meses", brand: "Sony", image: "https://images.unsplash.com/photo-1606813907291-d86efa9b94db?w=800&h=600&fit=crop", currentPrice: 45000, avgPrice: 65000, discount: 31, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "subs", publishedAt: new Date(Date.now() - 2 * 60 * 60 * 1000) },
+  { id: 37, name: "Xbox Game Pass Ultimate 3M", brand: "Microsoft", image: "https://images.unsplash.com/photo-1621259182978-fbf93132d53d?w=800&h=600&fit=crop", currentPrice: 28000, avgPrice: 38000, discount: 26, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "subs", publishedAt: new Date(Date.now() - 7 * 60 * 60 * 1000) },
+  { id: 38, name: "Spotify Premium 6 Meses", brand: "Spotify", image: "https://images.unsplash.com/photo-1614680376593-902f74cf0d41?w=800&h=600&fit=crop", currentPrice: 12000, avgPrice: 18000, discount: 33, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "subs", publishedAt: new Date(Date.now() - 5 * 60 * 60 * 1000) },
+  { id: 39, name: "Nintendo Switch Online 12M", brand: "Nintendo", image: "https://images.unsplash.com/photo-1578303512597-81e6cc155b3e?w=800&h=600&fit=crop", currentPrice: 18000, avgPrice: 25000, discount: 28, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "subs", publishedAt: new Date(Date.now() - 10 * 60 * 60 * 1000) },
+  { id: 40, name: "YouTube Premium 12 Meses", brand: "Google", image: "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=800&h=600&fit=crop", currentPrice: 22000, avgPrice: 32000, discount: 31, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "subs", publishedAt: new Date(Date.now() - 14 * 60 * 60 * 1000) },
+
+  // GEEK
+  { id: 41, name: "Funko Pop! Mandalorian", brand: "Funko", image: "https://images.unsplash.com/photo-1608889825103-eb5ed706fc64?w=800&h=600&fit=crop", currentPrice: 18000, avgPrice: 28000, discount: 36, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "geek", publishedAt: new Date(Date.now() - 1 * 60 * 60 * 1000) },
+  { id: 42, name: "Mousepad XXL RGB", brand: "Razer", image: "https://images.unsplash.com/photo-1616588589676-62b3bd4ff6d2?w=800&h=600&fit=crop", currentPrice: 45000, avgPrice: 62000, discount: 27, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "geek", publishedAt: new Date(Date.now() - 6 * 60 * 60 * 1000) },
+  { id: 43, name: "Lámpara LED Pikachu", brand: "Pokemon", image: "https://images.unsplash.com/photo-1609372332255-611485350f25?w=800&h=600&fit=crop", currentPrice: 25000, avgPrice: 38000, discount: 34, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "geek", publishedAt: new Date(Date.now() - 9 * 60 * 60 * 1000) },
+  { id: 44, name: "Remera Stranger Things", brand: "Netflix", image: "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=800&h=600&fit=crop", currentPrice: 15000, avgPrice: 22000, discount: 32, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "low", category: "geek", publishedAt: new Date(Date.now() - 3 * 60 * 60 * 1000) },
+  { id: 45, name: "Lego Star Wars Falcon", brand: "Lego", image: "https://images.unsplash.com/photo-1585366119957-e9730b6d0f60?w=800&h=600&fit=crop", currentPrice: 85000, avgPrice: 120000, discount: 29, store: "mercadolibre", url: "https://mercadolibre.com.ar", stock: "available", category: "geek", publishedAt: new Date(Date.now() - 18 * 60 * 60 * 1000) },
 ];
 
-// Format price
-const formatPrice = (price) => {
-  return new Intl.NumberFormat('es-AR', {
-    style: 'currency',
-    currency: 'ARS',
-    minimumFractionDigits: 0,
-  }).format(price);
+// ============================================
+// STORES
+// ============================================
+const stores = {
+  mercadolibre: { name: "Mercado Libre", short: "MELI", color: "#FFE600", text: "#000" },
+  garbarino: { name: "Garbarino", short: "GARBA", color: "#E31837", text: "#FFF" },
+  megatone: { name: "Megatone", short: "MEGA", color: "#0066CC", text: "#FFF" },
 };
+
+// ============================================
+// UTILS
+// ============================================
+const formatPrice = (p) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(p);
+
+const getScore = (discount) => Math.min((discount / 40 * 10), 10).toFixed(1);
+
+const getScoreLabel = (discount) => {
+  if (discount >= 35) return { label: 'ÉPICA', color: '#f97316' };
+  if (discount >= 28) return { label: 'MUY BUENA', color: '#22c55e' };
+  if (discount >= 20) return { label: 'BUENA', color: '#3b82f6' };
+  return { label: 'OK', color: '#6b7280' };
+};
+
+const getTimeAgo = (date) => {
+  const now = new Date();
+  const diff = now - date;
+  const minutes = Math.floor(diff / 60000);
+  const hours = Math.floor(minutes / 60);
+  const days = Math.floor(hours / 24);
+  
+  if (days > 0) return `${days}d`;
+  if (hours > 0) return `${hours}h`;
+  return `${minutes}m`;
+};
+
+// ============================================
+// SHARE MODAL
+// ============================================
+const ShareModal = ({ deal, onClose }) => {
+  const shareUrl = `${window.location.origin}${window.location.pathname}?deal=${deal.id}`;
+  const shareText = `🔥 ${deal.name} a ${formatPrice(deal.currentPrice)} (-${deal.discount}%) en NerDeals`;
+  
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shareUrl);
+    alert('¡Link copiado!');
+  };
+  
+  const shareTwitter = () => {
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`, '_blank');
+  };
+  
+  const shareWhatsApp = () => {
+    window.open(`https://wa.me/?text=${encodeURIComponent(shareText + ' ' + shareUrl)}`, '_blank');
+  };
+
+  return (
+    <div onClick={onClose} style={{
+      position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 100,
+      display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
+    }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        background: '#111', borderRadius: '20px', maxWidth: '400px', width: '100%',
+        padding: '24px', border: '1px solid #222',
+      }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+          <h3 style={{ fontSize: '18px', fontWeight: 'bold', margin: 0 }}>Compartir oferta</h3>
+          <button onClick={onClose} style={{
+            background: '#222', border: 'none', color: '#fff', width: '32px', height: '32px',
+            borderRadius: '8px', cursor: 'pointer', fontSize: '16px',
+          }}>✕</button>
+        </div>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+          <button onClick={shareTwitter} style={{
+            display: 'flex', alignItems: 'center', gap: '12px',
+            background: '#1DA1F2', border: 'none', borderRadius: '12px',
+            padding: '14px 20px', color: '#fff', fontSize: '15px', fontWeight: '600',
+            cursor: 'pointer',
+          }}>
+            <span>🐦</span> Compartir en Twitter
+          </button>
+          
+          <button onClick={shareWhatsApp} style={{
+            display: 'flex', alignItems: 'center', gap: '12px',
+            background: '#25D366', border: 'none', borderRadius: '12px',
+            padding: '14px 20px', color: '#fff', fontSize: '15px', fontWeight: '600',
+            cursor: 'pointer',
+          }}>
+            <span>💬</span> Compartir en WhatsApp
+          </button>
+          
+          <button onClick={copyToClipboard} style={{
+            display: 'flex', alignItems: 'center', gap: '12px',
+            background: '#333', border: 'none', borderRadius: '12px',
+            padding: '14px 20px', color: '#fff', fontSize: '15px', fontWeight: '600',
+            cursor: 'pointer',
+          }}>
+            <span>🔗</span> Copiar link
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================
+// PREVIEW CARD
+// ============================================
+const PreviewCard = ({ deal, onClick }) => {
+  if (!deal) return <div style={{ width: '200px', flexShrink: 0 }} />;
+  
+  const scoreInfo = getScoreLabel(deal.discount);
+  
+  return (
+    <div 
+      onClick={onClick}
+      style={{
+        width: '200px',
+        flexShrink: 0,
+        background: '#0a0a0a',
+        borderRadius: '16px',
+        border: '1px solid #222',
+        overflow: 'hidden',
+        cursor: 'pointer',
+        opacity: 0.7,
+        transition: 'all 0.3s',
+      }}
+      onMouseEnter={e => e.currentTarget.style.opacity = '1'}
+      onMouseLeave={e => e.currentTarget.style.opacity = '0.7'}
+    >
+      <div style={{ position: 'relative', height: '120px', overflow: 'hidden' }}>
+        <img src={deal.image} alt={deal.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div style={{ position: 'absolute', top: '8px', right: '8px', background: scoreInfo.color, color: '#000', padding: '4px 8px', borderRadius: '6px', fontSize: '12px', fontWeight: 'bold' }}>
+          -{deal.discount}%
+        </div>
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%', background: 'linear-gradient(to top, #0a0a0a, transparent)' }} />
+      </div>
+      <div style={{ padding: '12px' }}>
+        <p style={{ fontSize: '10px', color: '#4ade80', margin: 0, textTransform: 'uppercase', fontWeight: '600' }}>{deal.brand}</p>
+        <p style={{ fontSize: '13px', color: '#fff', margin: '4px 0', fontWeight: '600', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{deal.name}</p>
+        <p style={{ fontSize: '16px', color: '#fff', margin: 0, fontWeight: 'bold' }}>{formatPrice(deal.currentPrice)}</p>
+      </div>
+    </div>
+  );
+};
+
+// ============================================
+// MAIN CARD
+// ============================================
+const MainCard = ({ deal, onShare }) => {
+  const store = stores[deal.store] || { name: deal.store, short: deal.store, color: '#666', text: '#fff' };
+  const score = getScore(deal.discount);
+  const scoreInfo = getScoreLabel(deal.discount);
+  const savings = deal.avgPrice - deal.currentPrice;
+
+  return (
+    <div style={{
+      width: '100%',
+      maxWidth: '420px',
+      background: deal.discount >= 35 ? 'linear-gradient(180deg, #1a0f00 0%, #0a0500 100%)' : 'linear-gradient(180deg, #0f0f0f 0%, #050505 100%)',
+      borderRadius: '20px',
+      border: deal.discount >= 35 ? '2px solid #f97316' : '1px solid #222',
+      overflow: 'hidden',
+    }}>
+      {/* Image */}
+      <div style={{ position: 'relative', height: '200px', overflow: 'hidden', background: '#111' }}>
+        <img src={deal.image} alt={deal.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '60%', background: 'linear-gradient(to top, #000, transparent)' }} />
+        
+        {/* Score */}
+        <div style={{
+          position: 'absolute', top: '12px', left: '12px',
+          background: 'rgba(0,0,0,0.85)', padding: '8px 12px', borderRadius: '10px',
+          border: `1px solid ${scoreInfo.color}`,
+        }}>
+          <div style={{ fontSize: '18px', fontWeight: 'bold', color: scoreInfo.color, lineHeight: 1 }}>
+            {score}<span style={{ fontSize: '12px' }}>/10</span>
+          </div>
+          <div style={{ fontSize: '9px', fontWeight: '700', color: scoreInfo.color, letterSpacing: '0.5px' }}>{scoreInfo.label}</div>
+        </div>
+
+        {/* Discount */}
+        <div style={{
+          position: 'absolute', top: '12px', right: '12px',
+          background: deal.discount >= 35 ? '#f97316' : '#22c55e',
+          color: '#000', padding: '8px 14px', borderRadius: '10px',
+          fontWeight: 'bold', fontSize: '18px',
+        }}>-{deal.discount}%</div>
+
+        {/* Store */}
+        <div style={{
+          position: 'absolute', bottom: '12px', left: '12px',
+          background: store.color, color: store.text,
+          padding: '6px 12px', borderRadius: '8px',
+          fontWeight: 'bold', fontSize: '11px',
+        }}>{store.short}</div>
+
+        {/* Stock */}
+        {deal.stock === 'low' && (
+          <div style={{
+            position: 'absolute', bottom: '12px', right: '12px',
+            background: 'rgba(251,191,36,0.2)', color: '#fbbf24',
+            padding: '6px 12px', borderRadius: '8px',
+            fontSize: '11px', fontWeight: '600',
+            border: '1px solid rgba(251,191,36,0.3)',
+          }}>⚡ Pocas unidades</div>
+        )}
+      </div>
+
+      {/* Info */}
+      <div style={{ padding: '20px' }}>
+        <p style={{ color: '#4ade80', fontSize: '12px', fontWeight: '600', textTransform: 'uppercase', margin: 0 }}>{deal.brand}</p>
+        <h3 style={{ color: 'white', fontSize: '20px', fontWeight: '700', margin: '6px 0 16px 0', lineHeight: 1.3 }}>{deal.name}</h3>
+
+        {/* Price */}
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '16px' }}>
+          <span style={{ fontSize: '32px', fontWeight: 'bold', color: 'white' }}>{formatPrice(deal.currentPrice)}</span>
+          <span style={{ fontSize: '16px', color: '#666', textDecoration: 'line-through' }}>{formatPrice(deal.avgPrice)}</span>
+        </div>
+
+        {/* Savings */}
+        <div style={{
+          background: 'rgba(34,197,94,0.1)', border: '1px solid rgba(34,197,94,0.2)',
+          borderRadius: '12px', padding: '14px', marginBottom: '16px',
+        }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+            <span style={{ fontSize: '13px', color: '#9ca3af' }}>💰 Ahorrás</span>
+            <span style={{ fontSize: '20px', fontWeight: 'bold', color: '#22c55e' }}>{formatPrice(savings)}</span>
+          </div>
+          <div style={{ background: '#1a1a1a', borderRadius: '6px', height: '8px', overflow: 'hidden' }}>
+            <div style={{
+              height: '100%', width: `${Math.min(deal.discount * 2.5, 100)}%`,
+              background: `linear-gradient(90deg, ${scoreInfo.color}, ${scoreInfo.color}aa)`,
+              borderRadius: '6px',
+            }} />
+          </div>
+          <p style={{ fontSize: '12px', color: '#666', margin: '8px 0 0 0', textAlign: 'right' }}>{deal.discount}% menos que el promedio</p>
+        </div>
+
+        {/* CTAs */}
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <a href={deal.url} target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none', flex: 1 }}>
+            <button style={{
+              width: '100%', padding: '16px', borderRadius: '12px', border: 'none',
+              background: 'linear-gradient(135deg, #22c55e, #06b6d4)',
+              color: '#000', fontSize: '15px', fontWeight: 'bold', cursor: 'pointer',
+            }}>Ver en {store.name} →</button>
+          </a>
+          <button 
+            onClick={onShare}
+            style={{
+              padding: '16px 20px', borderRadius: '12px', border: '1px solid #333',
+              background: '#111', color: '#fff', fontSize: '16px', cursor: 'pointer',
+            }}
+          >📤</button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// ============================================
+// HOW IT WORKS MODAL
+// ============================================
+const HowItWorksModal = ({ onClose }) => (
+  <div onClick={onClose} style={{
+    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 100,
+    display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
+  }}>
+    <div onClick={e => e.stopPropagation()} style={{
+      background: '#111', borderRadius: '20px', maxWidth: '450px', width: '100%',
+      padding: '28px', border: '1px solid #222',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+        <h2 style={{ fontSize: '22px', fontWeight: 'bold', margin: 0, color: 'white' }}>¿Cómo funciona?</h2>
+        <button onClick={onClose} style={{
+          background: '#222', border: 'none', color: '#fff', width: '36px', height: '36px',
+          borderRadius: '10px', cursor: 'pointer', fontSize: '18px',
+        }}>✕</button>
+      </div>
+      
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+          <div style={{ width: '44px', height: '44px', background: '#1a1a1a', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>🔍</div>
+          <div>
+            <h4 style={{ color: 'white', fontSize: '15px', margin: '0 0 4px 0', fontWeight: '600' }}>Curamos ofertas</h4>
+            <p style={{ color: '#888', fontSize: '13px', margin: 0, lineHeight: 1.5 }}>Buscamos los mejores precios en tecnología de Argentina todos los días.</p>
+          </div>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+          <div style={{ width: '44px', height: '44px', background: '#1a1a1a', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>📊</div>
+          <div>
+            <h4 style={{ color: 'white', fontSize: '15px', margin: '0 0 4px 0', fontWeight: '600' }}>Verificamos el descuento</h4>
+            <p style={{ color: '#888', fontSize: '13px', margin: 0, lineHeight: 1.5 }}>Comparamos contra el precio promedio de los últimos 30 días. Sin humo.</p>
+          </div>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
+          <div style={{ width: '44px', height: '44px', background: '#1a1a1a', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px', flexShrink: 0 }}>🛒</div>
+          <div>
+            <h4 style={{ color: 'white', fontSize: '15px', margin: '0 0 4px 0', fontWeight: '600' }}>Vos decidís</h4>
+            <p style={{ color: '#888', fontSize: '13px', margin: 0, lineHeight: 1.5 }}>Si te convence, hacé click y comprá directo en la tienda oficial.</p>
+          </div>
+        </div>
+      </div>
+      
+      <div style={{
+        marginTop: '24px', padding: '16px', background: 'rgba(34,197,94,0.1)',
+        borderRadius: '12px', border: '1px solid rgba(34,197,94,0.2)',
+      }}>
+        <p style={{ color: '#4ade80', fontSize: '13px', margin: 0, textAlign: 'center' }}>
+          💡 Es 100% gratis y sin costo extra para vos
+        </p>
+      </div>
+    </div>
+  </div>
+);
+
+// ============================================
+// LEGAL MODAL
+// ============================================
+const LegalModal = ({ type, onClose }) => (
+  <div onClick={onClose} style={{
+    position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 100,
+    display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
+  }}>
+    <div onClick={e => e.stopPropagation()} style={{
+      background: '#111', borderRadius: '16px', maxWidth: '500px', maxHeight: '80vh',
+      overflow: 'auto', padding: '24px', border: '1px solid #222',
+    }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+        <h2 style={{ fontSize: '20px', fontWeight: 'bold', margin: 0 }}>
+          {type === 'terminos' ? 'Términos y Condiciones' : 'Política de Privacidad'}
+        </h2>
+        <button onClick={onClose} style={{
+          background: '#222', border: 'none', color: '#fff', width: '32px', height: '32px',
+          borderRadius: '8px', cursor: 'pointer', fontSize: '16px',
+        }}>✕</button>
+      </div>
+      <p style={{ color: '#666', fontSize: '12px', marginBottom: '20px' }}>Última actualización: Enero 2026</p>
+      
+      {type === 'terminos' ? (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>1. Sobre NerDeals</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals es un servicio independiente de curaduría y difusión de ofertas tecnológicas disponible en la República Argentina. NerDeals no es una tienda, no comercializa productos, no intermedia ventas ni presta servicios de pago, y no mantiene relación contractual directa con los vendedores de los productos publicados.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>2. Naturaleza del servicio</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals identifica y comparte ofertas que considera relevantes para su audiencia, basándose en criterios propios de análisis de precio, reputación del vendedor y disponibilidad pública de la información. NerDeals participa en programas de afiliados de terceros, tales como Mercado Libre Partners y Amazon Associates, entre otros. Cuando el usuario hace clic en un enlace y realiza una compra en un sitio de terceros, NerDeals puede recibir una comisión, sin que ello implique un costo adicional para el usuario.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>3. Información de precios y disponibilidad</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Los precios, descuentos y disponibilidad mostrados en NerDeals son referenciales y pueden modificarse en cualquier momento por los vendedores sin previo aviso. NerDeals no garantiza la vigencia de los precios publicados ni la disponibilidad de stock. El usuario debe verificar siempre el precio final, condiciones de venta y características del producto directamente en el sitio del vendedor antes de realizar una compra.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>4. Comparaciones e historial de precios</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>Las comparaciones de precios (por ejemplo, "precio promedio de 30 días") se basan en estimaciones realizadas a partir de información pública disponible al momento del análisis. Dichas comparaciones no constituyen una garantía de precio, no representan un historial exhaustivo, y pueden no reflejar la totalidad de las variaciones del mercado. NerDeals no garantiza la exactitud absoluta de estos datos, los cuales se ofrecen únicamente con fines informativos.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>5. Responsabilidad</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals no es responsable por: las transacciones realizadas en sitios de terceros, la calidad, funcionamiento o autenticidad de los productos, envíos, garantías, devoluciones, cancelaciones o reclamos. Cualquier inconveniente relacionado con la compra debe ser gestionado exclusivamente entre el usuario y el vendedor o plataforma correspondiente.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>6. Limitación de responsabilidad</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>El uso del sitio NerDeals implica la aceptación expresa de que el servicio se brinda "tal como está", sin garantías explícitas ni implícitas. En ningún caso NerDeals será responsable por daños directos, indirectos, incidentales o consecuentes derivados del uso del sitio o de la información publicada.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>7. Aceptación</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>El acceso y uso de NerDeals implica la aceptación plena de los presentes Términos y Condiciones.</p></div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>1. Información que recopilamos</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals recopila información mínima y no identificable con el objetivo de mejorar la experiencia del usuario y el funcionamiento del sitio. Esta información puede incluir: datos de navegación anónimos, tipo de dispositivo, navegador y sistema operativo, interacciones con enlaces y contenidos del sitio. NerDeals no recopila datos personales sensibles ni información que permita identificar directamente a los usuarios.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>2. Uso de cookies</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals utiliza cookies propias y de terceros con fines funcionales, analíticos y de seguimiento de conversiones de afiliados. Las cookies pueden utilizarse para: analizar el uso del sitio, medir el rendimiento de las ofertas publicadas, atribuir compras a programas de afiliados. El usuario puede configurar su navegador para rechazar o eliminar cookies, aunque esto puede afectar el correcto funcionamiento del sitio.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>3. Enlaces a sitios de terceros</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals contiene enlaces a sitios web de terceros. Al hacer clic en una oferta, el usuario es redirigido a plataformas externas que cuentan con sus propias políticas de privacidad y términos, sobre los cuales NerDeals no tiene control ni responsabilidad.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>4. Programas de afiliados</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals participa en programas de afiliados de terceros. Estos programas pueden utilizar cookies u otras tecnologías de seguimiento para registrar las compras originadas desde nuestro sitio, sin generar ningún costo adicional para el usuario.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>5. Compartir información</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals no vende, alquila ni comparte información personal identificable de los usuarios con terceros. La información recopilada es utilizada únicamente con fines estadísticos, analíticos y operativos.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>6. Seguridad</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>NerDeals adopta medidas razonables para proteger la información recopilada. Sin embargo, el usuario reconoce que ningún sistema de transmisión o almacenamiento de datos es completamente seguro, y NerDeals no puede garantizar una seguridad absoluta.</p></div>
+          <div><h4 style={{ color: 'white', fontSize: '14px', margin: '0 0 8px 0' }}>7. Aceptación</h4><p style={{ color: '#999', fontSize: '13px', margin: 0, lineHeight: 1.6 }}>El uso del sitio NerDeals implica la aceptación de la presente Política de Privacidad.</p></div>
+        </div>
+      )}
+    </div>
+  </div>
+);
+
+// ============================================
+// EMPTY STATE
+// ============================================
+const EmptyState = ({ searchTerm, onClear }) => (
+  <div style={{ 
+    textAlign: 'center', 
+    padding: '60px 20px',
+    maxWidth: '400px',
+    margin: '0 auto',
+  }}>
+    <div style={{ fontSize: '64px', marginBottom: '20px' }}>🔍</div>
+    <h3 style={{ color: 'white', fontSize: '20px', margin: '0 0 12px 0' }}>
+      No encontramos ofertas
+    </h3>
+    <p style={{ color: '#666', fontSize: '15px', margin: '0 0 24px 0', lineHeight: 1.5 }}>
+      No hay resultados para "<span style={{ color: '#fff' }}>{searchTerm}</span>".
+      <br />Probá con otro término o explorá las categorías.
+    </p>
+    <button 
+      onClick={onClear}
+      style={{
+        background: '#222', border: 'none', borderRadius: '12px',
+        padding: '14px 28px', color: '#fff', fontSize: '15px',
+        fontWeight: '600', cursor: 'pointer',
+      }}
+    >
+      Limpiar búsqueda
+    </button>
+  </div>
+);
 
 // ============================================
 // MAIN APP
 // ============================================
 export default function App() {
-  const [activeCategory, setActiveCategory] = useState('all');
+  const [activeCategory, setActiveCategory] = useState('top');
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [votes, setVotes] = useState({});
-  const [showToast, setShowToast] = useState(null);
-  const [viewMode, setViewMode] = useState('swipe'); // swipe or grid
-  const containerRef = useRef(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
+  const [legalModal, setLegalModal] = useState(null);
+  const [shareModal, setShareModal] = useState(null);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
 
-  // Filter deals
-  const filteredDeals = activeCategory === 'all' 
-    ? DEALS 
-    : DEALS.filter(d => d.category === activeCategory);
-
-  // Handle swipe/scroll
-  const goToNext = () => {
-    if (currentIndex < filteredDeals.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-      vibrate();
-    }
-  };
-
-  const goToPrev = () => {
-    if (currentIndex > 0) {
-      setCurrentIndex(currentIndex - 1);
-      vibrate();
-    }
-  };
-
-  // Haptic feedback
-  const vibrate = () => {
-    if (navigator.vibrate) navigator.vibrate(10);
-  };
-
-  // Vote handler
-  const handleVote = (dealId) => {
-    const newVotes = { ...votes };
-    newVotes[dealId] = !newVotes[dealId];
-    setVotes(newVotes);
-    localStorage.setItem('nerdeals_votes', JSON.stringify(newVotes));
-    
-    if (newVotes[dealId]) {
-      toast('🔥 ¡VOTASTE!');
-      vibrate();
-    }
-  };
-
-  // Toast notification
-  const toast = (message) => {
-    setShowToast(message);
-    setTimeout(() => setShowToast(null), 2000);
-  };
-
-  // Load votes from localStorage
+  // Handle URL params for direct deal link
   useEffect(() => {
-    const saved = localStorage.getItem('nerdeals_votes');
-    if (saved) setVotes(JSON.parse(saved));
+    const params = new URLSearchParams(window.location.search);
+    const dealId = params.get('deal');
+    if (dealId) {
+      const dealIndex = dealsData.findIndex(d => d.id === parseInt(dealId));
+      if (dealIndex !== -1) {
+        setActiveCategory('top');
+        // Find index in sorted array
+        const sortedDeals = [...dealsData].sort((a, b) => b.discount - a.discount);
+        const sortedIndex = sortedDeals.findIndex(d => d.id === parseInt(dealId));
+        if (sortedIndex !== -1) {
+          setCurrentIndex(sortedIndex);
+        }
+      }
+    }
   }, []);
 
-  // Reset index when category changes
-  useEffect(() => {
-    setCurrentIndex(0);
-  }, [activeCategory]);
+  // Get filtered deals
+  const deals = useMemo(() => {
+    let filtered = activeCategory === 'top' 
+      ? [...dealsData].sort((a, b) => b.discount - a.discount)
+      : dealsData.filter(d => d.category === activeCategory);
+    
+    if (searchTerm) {
+      filtered = filtered.filter(d => 
+        d.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        d.brand.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    }
+    return filtered;
+  }, [activeCategory, searchTerm]);
 
-  // Keyboard navigation
+  const currentDeal = deals[currentIndex];
+  const prevDeal = deals[currentIndex - 1];
+  const nextDeal = deals[currentIndex + 1];
+  const category = categories.find(c => c.id === activeCategory);
+
+  // Navigation
+  const goNext = () => currentIndex < deals.length - 1 && setCurrentIndex(currentIndex + 1);
+  const goPrev = () => currentIndex > 0 && setCurrentIndex(currentIndex - 1);
+  const changeCategory = (catId) => { setActiveCategory(catId); setCurrentIndex(0); };
+  const clearSearch = () => { setSearchTerm(''); setCurrentIndex(0); };
+
+  // Swipe
+  const onTouchStart = (e) => { setTouchEnd(null); setTouchStart(e.targetTouches[0].clientX); };
+  const onTouchMove = (e) => setTouchEnd(e.targetTouches[0].clientX);
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    if (distance > 50) goNext();
+    if (distance < -50) goPrev();
+  };
+
+  // Keyboard
   useEffect(() => {
     const handleKey = (e) => {
-      if (e.key === 'ArrowRight' || e.key === 'ArrowDown') goToNext();
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') goToPrev();
+      if (e.key === 'ArrowRight') goNext();
+      if (e.key === 'ArrowLeft') goPrev();
     };
     window.addEventListener('keydown', handleKey);
     return () => window.removeEventListener('keydown', handleKey);
-  }, [currentIndex, filteredDeals.length]);
-
-  // Touch swipe
-  const touchStart = useRef(0);
-  const handleTouchStart = (e) => {
-    touchStart.current = e.touches[0].clientX;
-  };
-  const handleTouchEnd = (e) => {
-    const diff = touchStart.current - e.changedTouches[0].clientX;
-    if (Math.abs(diff) > 50) {
-      if (diff > 0) goToNext();
-      else goToPrev();
-    }
-  };
-
-  const currentDeal = filteredDeals[currentIndex];
+  });
 
   return (
-    <div style={styles.app}>
+    <div style={{ minHeight: '100vh', background: '#000', color: 'white', fontFamily: 'system-ui, -apple-system, sans-serif', display: 'flex', flexDirection: 'column' }}>
+      
       {/* HEADER */}
-      <header style={styles.header}>
-        <div style={styles.headerInner}>
-          <div style={styles.logo}>
-            <div style={styles.logoIcon}>N</div>
-            <span style={styles.logoText}>Ner<span style={styles.logoAccent}>Deals</span></span>
+      <header style={{ borderBottom: '1px solid #1a1a1a', padding: '12px 20px' }}>
+        <div style={{ maxWidth: '1400px', margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+          {/* Logo */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '38px', height: '38px', background: 'linear-gradient(135deg, #4ade80, #06b6d4)', borderRadius: '10px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: '900', fontSize: '20px', color: '#000' }}>N</div>
+            <span style={{ fontSize: '22px', fontWeight: 'bold' }}>Ner<span style={{ color: '#4ade80' }}>Deals</span></span>
           </div>
-          <div style={styles.headerActions}>
-            <button 
-              style={{...styles.viewToggle, ...(viewMode === 'grid' ? styles.viewToggleActive : {})}}
-              onClick={() => setViewMode(viewMode === 'swipe' ? 'grid' : 'swipe')}
-            >
-              {viewMode === 'swipe' ? '▦' : '◧'}
+
+          {/* Actions */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <button onClick={() => setShowHowItWorks(true)} style={{ background: '#111', border: '1px solid #222', borderRadius: '10px', padding: '10px 14px', color: '#fff', fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>❓</span><span className="hide-mobile">¿Cómo funciona?</span>
             </button>
-            <a href="https://cafecito.app/nerdeals" target="_blank" rel="noopener" style={styles.coffeeBtn}>
-              ☕
+            <a href="https://forms.gle/Jk2QGcXYH3UGujuY7" target="_blank" rel="noopener noreferrer" style={{ background: '#111', border: '1px solid #222', borderRadius: '10px', padding: '10px 14px', color: '#fff', fontSize: '13px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>🏪</span><span className="hide-mobile">Comercios</span>
+            </a>
+            <a href="https://forms.gle/F9feFAC2i2f67BsN8" target="_blank" rel="noopener noreferrer" style={{ background: '#111', border: '1px solid #222', borderRadius: '10px', padding: '10px 14px', color: '#fff', fontSize: '13px', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>💬</span><span className="hide-mobile">Feedback</span>
+            </a>
+            <a href="https://cafecito.app/nerdeals" target="_blank" rel="noopener noreferrer" style={{ background: 'linear-gradient(135deg, #6f4e37, #8B4513)', borderRadius: '10px', padding: '10px 16px', color: '#fff', fontSize: '13px', fontWeight: '600', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <span>☕</span><span className="hide-mobile">Apoyar</span>
             </a>
           </div>
         </div>
       </header>
 
-      {/* CATEGORIES */}
-      <nav style={styles.categories}>
-        <div style={styles.categoriesInner}>
-          {CATEGORIES.map(cat => (
+      {/* CATEGORIES + SEARCH */}
+      <div style={{ borderBottom: '1px solid #1a1a1a', padding: '12px 20px', overflowX: 'auto' }}>
+        <div style={{ display: 'flex', gap: '8px', justifyContent: 'center', alignItems: 'center', minWidth: 'max-content' }}>
+          {categories.map(cat => (
             <button
               key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
+              onClick={() => changeCategory(cat.id)}
               style={{
-                ...styles.catPill,
-                ...(activeCategory === cat.id ? {
-                  background: `${cat.color}22`,
-                  borderColor: cat.color,
-                  color: cat.color,
-                  boxShadow: `0 0 20px ${cat.color}33`
-                } : {})
+                display: 'flex', alignItems: 'center', gap: '8px',
+                padding: '10px 18px', borderRadius: '25px',
+                border: activeCategory === cat.id ? `2px solid ${cat.color}` : '2px solid transparent',
+                background: activeCategory === cat.id ? `${cat.color}15` : '#111',
+                cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s',
               }}
             >
-              <span>{cat.emoji}</span>
-              <span style={styles.catName}>{cat.name}</span>
+              <span style={{ fontSize: '16px' }}>{cat.emoji}</span>
+              <span style={{ fontSize: '14px', fontWeight: '600', color: activeCategory === cat.id ? cat.color : '#888' }}>{cat.name}</span>
             </button>
           ))}
+          
+          {/* Search - Right side */}
+          <div style={{ display: 'flex', alignItems: 'center', background: '#111', borderRadius: '25px', padding: '8px 16px', gap: '8px', border: '1px solid #222', marginLeft: '8px' }}>
+            <span style={{ color: '#666', fontSize: '14px' }}>🔍</span>
+            <input 
+              type="text" 
+              placeholder="Buscar..." 
+              value={searchTerm}
+              onChange={e => { setSearchTerm(e.target.value); setCurrentIndex(0); }}
+              style={{ background: 'transparent', border: 'none', outline: 'none', color: 'white', fontSize: '13px', width: '100px' }}
+            />
+          </div>
         </div>
-      </nav>
-
-      {/* LIVE COUNTER */}
-      <div style={styles.liveBar}>
-        <div style={styles.liveDot}></div>
-        <span>{filteredDeals.length} ofertas activas</span>
-        <span style={styles.liveTime}>• Actualizado hace 5m</span>
       </div>
 
-      {/* MAIN CONTENT */}
-      {viewMode === 'swipe' ? (
-        /* SWIPE MODE */
-        <main 
-          style={styles.swipeContainer}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          ref={containerRef}
-        >
-          {currentDeal && (
-            <DealCard 
-              deal={currentDeal} 
-              isVoted={votes[currentDeal.id]}
-              onVote={() => handleVote(currentDeal.id)}
-              index={currentIndex}
-              total={filteredDeals.length}
-            />
-          )}
-          
-          {/* Navigation arrows */}
-          <button 
-            style={{...styles.navArrow, ...styles.navPrev, ...(currentIndex === 0 ? styles.navDisabled : {})}}
-            onClick={goToPrev}
-            disabled={currentIndex === 0}
-          >
-            ←
-          </button>
-          <button 
-            style={{...styles.navArrow, ...styles.navNext, ...(currentIndex === filteredDeals.length - 1 ? styles.navDisabled : {})}}
-            onClick={goToNext}
-            disabled={currentIndex === filteredDeals.length - 1}
-          >
-            →
-          </button>
-
-          {/* Progress dots */}
-          <div style={styles.dots}>
-            {filteredDeals.slice(0, 10).map((_, i) => (
-              <div 
-                key={i} 
-                style={{
-                  ...styles.dot,
-                  ...(i === currentIndex ? styles.dotActive : {}),
-                  ...(i === currentIndex && filteredDeals[i]?.isHot ? styles.dotHot : {})
-                }}
-                onClick={() => setCurrentIndex(i)}
-              />
-            ))}
-            {filteredDeals.length > 10 && <span style={styles.dotMore}>+{filteredDeals.length - 10}</span>}
-          </div>
-        </main>
-      ) : (
-        /* GRID MODE */
-        <main style={styles.gridContainer}>
-          {filteredDeals.map((deal, i) => (
-            <DealCardMini 
-              key={deal.id}
-              deal={deal}
-              isVoted={votes[deal.id]}
-              onVote={() => handleVote(deal.id)}
-            />
-          ))}
-        </main>
-      )}
-
-      {/* TOAST */}
-      {showToast && (
-        <div style={styles.toast}>{showToast}</div>
-      )}
-
-      {/* FOOTER */}
-      <footer style={styles.footer}>
-        <p>NerDeals © 2026 • Los precios pueden variar</p>
-        <p style={styles.footerDisclaimer}>💡 Links de afiliado. Podés generar comisiones sin costo extra.</p>
-      </footer>
-    </div>
-  );
-}
-
-// ============================================
-// DEAL CARD (Full - Swipe mode)
-// ============================================
-function DealCard({ deal, isVoted, onVote, index, total }) {
-  const savings = deal.originalPrice - deal.currentPrice;
-  const scoreColor = deal.score >= 9 ? '#ff6b35' : deal.score >= 8 ? '#30d158' : '#ffd60a';
-  
-  return (
-    <article style={styles.card}>
-      {/* Image section */}
-      <div style={styles.cardImage}>
-        <img src={deal.image} alt={deal.title} style={styles.cardImg} />
-        
-        {/* Overlay gradient */}
-        <div style={styles.cardOverlay}></div>
-        
-        {/* Top badges */}
-        <div style={styles.cardTopBadges}>
-          <div style={{...styles.scoreBadge, borderColor: scoreColor, color: scoreColor}}>
-            <span style={styles.scoreNum}>{deal.score}</span>
-            <span style={styles.scoreMax}>/10</span>
-          </div>
-          <div style={{
-            ...styles.discountBadge,
-            background: deal.discount >= 30 ? 'linear-gradient(135deg, #ff6b35, #ff2d55)' : '#30d158'
-          }}>
-            -{deal.discount}%
-          </div>
+      {/* CATEGORY TITLE + URGENCY */}
+      <div style={{ textAlign: 'center', padding: '20px 16px 8px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}>
+          <span style={{ fontSize: '28px' }}>{category?.emoji}</span>
+          <span style={{ fontSize: '24px', fontWeight: '700', color: category?.color }}>{category?.name}</span>
         </div>
+        <p style={{ fontSize: '14px', color: '#666', margin: '8px 0 0 0' }}>
+          {searchTerm ? `${deals.length} resultados` : `Oferta ${currentIndex + 1} de ${deals.length}`}
+        </p>
+      </div>
 
-        {/* Bottom badges */}
-        <div style={styles.cardBottomBadges}>
+      {/* URGENCY BADGES */}
+      {currentDeal && (
+        <div style={{ 
+          display: 'flex', alignItems: 'center', justifyContent: 'center', 
+          gap: '16px', padding: '8px 20px', flexWrap: 'wrap',
+        }}>
+          {/* Time ago */}
           <div style={{
-            ...styles.storeBadge,
-            background: deal.store === 'meli' ? '#ffe600' : '#e31837',
-            color: deal.store === 'meli' ? '#000' : '#fff'
+            display: 'flex', alignItems: 'center', gap: '8px',
+            background: 'rgba(99,102,241,0.1)', border: '1px solid rgba(99,102,241,0.3)',
+            borderRadius: '20px', padding: '8px 14px',
           }}>
-            {deal.store === 'meli' ? 'MELI' : 'GARBA'}
+            <span style={{ fontSize: '14px' }}>📅</span>
+            <span style={{ color: '#818cf8', fontSize: '13px', fontWeight: '600' }}>
+              Publicado hace {getTimeAgo(currentDeal.publishedAt)}
+            </span>
           </div>
-          {deal.stock === 'low' && (
-            <div style={styles.stockBadge}>
-              ⚡ ÚLTIMAS UNIDADES
+
+          {/* Low price badge - only for 30%+ */}
+          {currentDeal.discount >= 30 && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+              background: 'rgba(249,115,22,0.1)', border: '1px solid rgba(249,115,22,0.3)',
+              borderRadius: '20px', padding: '8px 14px',
+            }}>
+              <span style={{ fontSize: '14px' }}>📉</span>
+              <span style={{ color: '#f97316', fontSize: '13px', fontWeight: '600' }}>
+                Precio más bajo en 30 días
+              </span>
+            </div>
+          )}
+
+          {/* Stock badge - only if low */}
+          {currentDeal.stock === 'low' && (
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+              background: 'rgba(251,191,36,0.1)', border: '1px solid rgba(251,191,36,0.3)',
+              borderRadius: '20px', padding: '8px 14px',
+            }}>
+              <span style={{ fontSize: '14px' }}>⚡</span>
+              <span style={{ color: '#fbbf24', fontSize: '13px', fontWeight: '600' }}>
+                Stock limitado
+              </span>
             </div>
           )}
         </div>
+      )}
 
-        {/* Counter */}
-        <div style={styles.cardCounter}>
-          {index + 1} / {total}
-        </div>
-      </div>
-
-      {/* Content section */}
-      <div style={styles.cardContent}>
-        {/* Tags */}
-        {deal.tags && (
-          <div style={styles.cardTags}>
-            {deal.tags.map((tag, i) => (
-              <span key={i} style={styles.tag}>{tag}</span>
-            ))}
+      {/* CAROUSEL */}
+      {deals.length > 0 ? (
+        <div 
+          style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px 20px', gap: '20px' }}
+          onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
+          onTouchEnd={onTouchEnd}
+        >
+          {/* Prev Card - Desktop */}
+          <div className="desktop-only" style={{ display: 'none' }}>
+            <PreviewCard deal={prevDeal} onClick={goPrev} />
           </div>
-        )}
 
-        {/* Brand & Title */}
-        <div style={styles.cardBrand}>{deal.brand}</div>
-        <h2 style={styles.cardTitle}>{deal.title}</h2>
-        <p style={styles.cardSubtitle}>{deal.subtitle}</p>
+          {/* Arrow Left */}
+          <button onClick={goPrev} disabled={currentIndex === 0} style={{
+            width: '50px', height: '50px', borderRadius: '50%', border: 'none',
+            background: currentIndex === 0 ? '#111' : '#222',
+            color: currentIndex === 0 ? '#333' : '#fff',
+            fontSize: '20px', cursor: currentIndex === 0 ? 'not-allowed' : 'pointer',
+            flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>←</button>
 
-        {/* Price */}
-        <div style={styles.priceSection}>
-          <div style={styles.priceRow}>
-            <span style={styles.priceCurrent}>{formatPrice(deal.currentPrice)}</span>
-            <span style={styles.priceOriginal}>{formatPrice(deal.originalPrice)}</span>
+          {/* Main Card */}
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            {currentDeal && <MainCard deal={currentDeal} onShare={() => setShareModal(currentDeal)} />}
           </div>
-          <div style={styles.savingsBox}>
-            <span style={styles.savingsIcon}>💰</span>
-            <span style={styles.savingsText}>Ahorrás</span>
-            <span style={styles.savingsAmount}>{formatPrice(savings)}</span>
-          </div>
-          <div style={styles.progressBar}>
-            <div style={{...styles.progressFill, width: `${deal.discount}%`}}></div>
-          </div>
-          <span style={styles.progressText}>{deal.discount}% menos que el precio habitual</span>
-        </div>
 
-        {/* Trust signals */}
-        <div style={styles.signals}>
-          {deal.isLowest && <span style={styles.signal}>📉 Precio más bajo</span>}
-          {deal.freeShipping && <span style={styles.signal}>🚚 Envío gratis</span>}
-          <span style={styles.signal}>✓ Vendedor top</span>
-          <span style={styles.signal}>🕐 Hace {deal.timeAgo}</span>
-        </div>
+          {/* Arrow Right */}
+          <button onClick={goNext} disabled={currentIndex === deals.length - 1} style={{
+            width: '50px', height: '50px', borderRadius: '50%', border: 'none',
+            background: currentIndex === deals.length - 1 ? '#111' : '#222',
+            color: currentIndex === deals.length - 1 ? '#333' : '#fff',
+            fontSize: '20px', cursor: currentIndex === deals.length - 1 ? 'not-allowed' : 'pointer',
+            flexShrink: 0, display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>→</button>
 
-        {/* Actions */}
-        <div style={styles.actions}>
-          <button 
-            style={{...styles.voteBtn, ...(isVoted ? styles.voteBtnActive : {})}}
-            onClick={onVote}
-          >
-            <span style={styles.voteIcon}>🔥</span>
-            <span>{deal.votes + (isVoted ? 1 : 0)}</span>
-          </button>
-          <a 
-            href={deal.url} 
-            target="_blank" 
-            rel="noopener sponsored"
-            style={styles.ctaBtn}
-          >
-            <span>VER OFERTA</span>
-            <span style={styles.ctaArrow}>→</span>
-          </a>
+          {/* Next Card - Desktop */}
+          <div className="desktop-only" style={{ display: 'none' }}>
+            <PreviewCard deal={nextDeal} onClick={goNext} />
+          </div>
         </div>
-      </div>
-    </article>
+      ) : (
+        <EmptyState searchTerm={searchTerm} onClear={clearSearch} />
+      )}
+
+      {/* DOTS */}
+      {deals.length > 0 && (
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px', padding: '12px 16px' }}>
+          {deals.slice(0, 10).map((_, i) => (
+            <button key={i} onClick={() => setCurrentIndex(i)} style={{
+              width: i === currentIndex ? '24px' : '8px', height: '8px', borderRadius: '4px',
+              background: i === currentIndex ? category?.color : '#333',
+              border: 'none', cursor: 'pointer', transition: 'all 0.2s',
+            }} />
+          ))}
+          {deals.length > 10 && <span style={{ fontSize: '11px', color: '#666', marginLeft: '6px' }}>+{deals.length - 10} más</span>}
+        </div>
+      )}
+
+      {/* FOOTER */}
+      <footer style={{ borderTop: '1px solid #1a1a1a', padding: '16px 20px', marginTop: 'auto' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '20px' }}>
+          <button onClick={() => setLegalModal('terminos')} style={{ background: 'none', border: 'none', color: '#666', fontSize: '13px', cursor: 'pointer' }}>Términos</button>
+          <button onClick={() => setLegalModal('privacidad')} style={{ background: 'none', border: 'none', color: '#666', fontSize: '13px', cursor: 'pointer' }}>Privacidad</button>
+          <a href="https://twitter.com/nerdeals" target="_blank" rel="noopener noreferrer" style={{ color: '#666', fontSize: '13px', textDecoration: 'none' }}>Twitter</a>
+          <a href="https://cafecito.app/nerdeals" target="_blank" rel="noopener noreferrer" style={{ color: '#d4a574', fontSize: '13px', textDecoration: 'none' }}>☕ Cafecito</a>
+        </div>
+        <p style={{ textAlign: 'center', color: '#444', fontSize: '11px', margin: '12px 0 0 0' }}>
+          NerDeals © 2026 · Precios referenciales · Los enlaces pueden generar comisiones sin costo extra
+        </p>
+      </footer>
+
+      {/* MODALS */}
+      {showHowItWorks && <HowItWorksModal onClose={() => setShowHowItWorks(false)} />}
+      {legalModal && <LegalModal type={legalModal} onClose={() => setLegalModal(null)} />}
+      {shareModal && <ShareModal deal={shareModal} onClose={() => setShareModal(null)} />}
+
+      {/* CSS */}
+      <style>{`
+        @media (min-width: 1024px) {
+          .desktop-only { display: block !important; }
+        }
+        @media (max-width: 768px) {
+          .hide-mobile { display: none !important; }
+        }
+      `}</style>
+    </div>
   );
 }
-
-// ============================================
-// DEAL CARD MINI (Grid mode)
-// ============================================
-function DealCardMini({ deal, isVoted, onVote }) {
-  return (
-    <article style={styles.miniCard}>
-      <div style={styles.miniImage}>
-        <img src={deal.image} alt={deal.title} style={styles.miniImg} />
-        <div style={styles.miniDiscount}>-{deal.discount}%</div>
-        {deal.isHot && <div style={styles.miniHot}>🔥</div>}
-      </div>
-      <div style={styles.miniContent}>
-        <div style={styles.miniBrand}>{deal.brand}</div>
-        <div style={styles.miniTitle}>{deal.title}</div>
-        <div style={styles.miniPrice}>{formatPrice(deal.currentPrice)}</div>
-        <a href={deal.url} target="_blank" rel="noopener sponsored" style={styles.miniCta}>
-          VER →
-        </a>
-      </div>
-    </article>
-  );
-}
-
-// ============================================
-// STYLES
-// ============================================
-const styles = {
-  app: {
-    minHeight: '100vh',
-    background: '#000',
-    color: '#fff',
-    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-    overflow: 'hidden',
-  },
-
-  // Header
-  header: {
-    position: 'sticky',
-    top: 0,
-    zIndex: 100,
-    background: 'rgba(0,0,0,0.9)',
-    backdropFilter: 'blur(20px)',
-    WebkitBackdropFilter: 'blur(20px)',
-    borderBottom: '1px solid #222',
-  },
-  headerInner: {
-    maxWidth: 600,
-    margin: '0 auto',
-    padding: '12px 16px',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  logo: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 10,
-  },
-  logoIcon: {
-    width: 36,
-    height: 36,
-    background: 'linear-gradient(135deg, #00ff88, #00d4ff)',
-    borderRadius: 10,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: 800,
-    fontSize: 18,
-    color: '#000',
-  },
-  logoText: {
-    fontSize: 20,
-    fontWeight: 700,
-  },
-  logoAccent: {
-    background: 'linear-gradient(135deg, #00ff88, #00d4ff)',
-    WebkitBackgroundClip: 'text',
-    WebkitTextFillColor: 'transparent',
-  },
-  headerActions: {
-    display: 'flex',
-    gap: 8,
-  },
-  viewToggle: {
-    width: 40,
-    height: 40,
-    border: '1px solid #333',
-    borderRadius: 10,
-    background: '#111',
-    color: '#888',
-    fontSize: 18,
-    cursor: 'pointer',
-  },
-  viewToggleActive: {
-    borderColor: '#00ff88',
-    color: '#00ff88',
-  },
-  coffeeBtn: {
-    width: 40,
-    height: 40,
-    border: '1px solid #8b5a2b',
-    borderRadius: 10,
-    background: 'linear-gradient(135deg, #8b5a2b, #d4a574)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontSize: 18,
-    textDecoration: 'none',
-  },
-
-  // Categories
-  categories: {
-    overflowX: 'auto',
-    WebkitOverflowScrolling: 'touch',
-    scrollbarWidth: 'none',
-    msOverflowStyle: 'none',
-    borderBottom: '1px solid #1a1a1a',
-  },
-  categoriesInner: {
-    display: 'flex',
-    gap: 8,
-    padding: '12px 16px',
-    minWidth: 'max-content',
-  },
-  catPill: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 6,
-    padding: '10px 16px',
-    border: '1px solid #333',
-    borderRadius: 20,
-    background: '#111',
-    color: '#888',
-    fontSize: 12,
-    fontWeight: 600,
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-    whiteSpace: 'nowrap',
-  },
-  catName: {
-    letterSpacing: '0.5px',
-  },
-
-  // Live bar
-  liveBar: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    padding: '10px 16px',
-    background: 'linear-gradient(90deg, rgba(255,107,53,0.1), transparent, rgba(255,107,53,0.1))',
-    fontSize: 12,
-    color: '#ff6b35',
-    fontWeight: 500,
-  },
-  liveDot: {
-    width: 8,
-    height: 8,
-    background: '#ff6b35',
-    borderRadius: '50%',
-    animation: 'pulse 1.5s ease-in-out infinite',
-  },
-  liveTime: {
-    color: '#666',
-  },
-
-  // Swipe container
-  swipeContainer: {
-    position: 'relative',
-    maxWidth: 500,
-    margin: '0 auto',
-    padding: '16px',
-    minHeight: 'calc(100vh - 200px)',
-  },
-
-  // Card
-  card: {
-    background: '#111',
-    borderRadius: 24,
-    overflow: 'hidden',
-    border: '1px solid #222',
-    boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
-  },
-  cardImage: {
-    position: 'relative',
-    aspectRatio: '4/3',
-    background: '#0a0a0a',
-    overflow: 'hidden',
-  },
-  cardImg: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-  },
-  cardOverlay: {
-    position: 'absolute',
-    inset: 0,
-    background: 'linear-gradient(0deg, rgba(0,0,0,0.8) 0%, transparent 50%, rgba(0,0,0,0.3) 100%)',
-  },
-  cardTopBadges: {
-    position: 'absolute',
-    top: 16,
-    left: 16,
-    right: 16,
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  scoreBadge: {
-    padding: '8px 12px',
-    background: 'rgba(0,0,0,0.8)',
-    backdropFilter: 'blur(10px)',
-    borderRadius: 12,
-    border: '2px solid',
-    fontWeight: 700,
-  },
-  scoreNum: {
-    fontSize: 20,
-  },
-  scoreMax: {
-    fontSize: 12,
-    opacity: 0.7,
-  },
-  discountBadge: {
-    padding: '8px 14px',
-    borderRadius: 12,
-    fontWeight: 800,
-    fontSize: 18,
-    color: '#fff',
-  },
-  cardBottomBadges: {
-    position: 'absolute',
-    bottom: 16,
-    left: 16,
-    right: 16,
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  storeBadge: {
-    padding: '6px 12px',
-    borderRadius: 8,
-    fontWeight: 700,
-    fontSize: 12,
-  },
-  stockBadge: {
-    padding: '6px 12px',
-    background: 'rgba(255,45,58,0.9)',
-    borderRadius: 8,
-    fontWeight: 600,
-    fontSize: 11,
-    color: '#fff',
-    animation: 'pulse 2s ease-in-out infinite',
-  },
-  cardCounter: {
-    position: 'absolute',
-    top: 16,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    padding: '4px 12px',
-    background: 'rgba(0,0,0,0.6)',
-    borderRadius: 20,
-    fontSize: 11,
-    color: '#888',
-  },
-
-  // Card content
-  cardContent: {
-    padding: 20,
-  },
-  cardTags: {
-    display: 'flex',
-    gap: 8,
-    marginBottom: 12,
-    flexWrap: 'wrap',
-  },
-  tag: {
-    padding: '4px 10px',
-    background: 'rgba(255,107,53,0.15)',
-    border: '1px solid rgba(255,107,53,0.3)',
-    borderRadius: 6,
-    fontSize: 11,
-    fontWeight: 600,
-    color: '#ff6b35',
-  },
-  cardBrand: {
-    fontSize: 12,
-    fontWeight: 700,
-    color: '#00ff88',
-    letterSpacing: 2,
-    marginBottom: 4,
-  },
-  cardTitle: {
-    fontSize: 24,
-    fontWeight: 800,
-    margin: 0,
-    lineHeight: 1.2,
-  },
-  cardSubtitle: {
-    fontSize: 14,
-    color: '#888',
-    marginTop: 4,
-  },
-
-  // Price section
-  priceSection: {
-    marginTop: 20,
-    padding: 16,
-    background: 'linear-gradient(135deg, rgba(0,255,136,0.05), rgba(0,212,255,0.05))',
-    borderRadius: 16,
-    border: '1px solid rgba(0,255,136,0.2)',
-  },
-  priceRow: {
-    display: 'flex',
-    alignItems: 'baseline',
-    gap: 12,
-  },
-  priceCurrent: {
-    fontSize: 32,
-    fontWeight: 800,
-    fontFamily: "'JetBrains Mono', monospace",
-  },
-  priceOriginal: {
-    fontSize: 18,
-    color: '#666',
-    textDecoration: 'line-through',
-  },
-  savingsBox: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    marginTop: 12,
-  },
-  savingsIcon: {
-    fontSize: 16,
-  },
-  savingsText: {
-    fontSize: 13,
-    color: '#888',
-  },
-  savingsAmount: {
-    fontSize: 18,
-    fontWeight: 700,
-    color: '#30d158',
-  },
-  progressBar: {
-    height: 6,
-    background: '#222',
-    borderRadius: 3,
-    marginTop: 12,
-    overflow: 'hidden',
-  },
-  progressFill: {
-    height: '100%',
-    background: 'linear-gradient(90deg, #30d158, #00ff88)',
-    borderRadius: 3,
-    transition: 'width 0.5s ease',
-  },
-  progressText: {
-    display: 'block',
-    fontSize: 11,
-    color: '#666',
-    marginTop: 6,
-    textAlign: 'center',
-  },
-
-  // Signals
-  signals: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    gap: 8,
-    marginTop: 16,
-  },
-  signal: {
-    fontSize: 11,
-    color: '#888',
-    padding: '4px 8px',
-    background: '#1a1a1a',
-    borderRadius: 6,
-  },
-
-  // Actions
-  actions: {
-    display: 'flex',
-    gap: 12,
-    marginTop: 20,
-  },
-  voteBtn: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: 8,
-    padding: '14px 20px',
-    border: '1px solid #333',
-    borderRadius: 14,
-    background: '#0a0a0a',
-    color: '#888',
-    fontSize: 15,
-    fontWeight: 600,
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-  },
-  voteBtnActive: {
-    borderColor: '#ff6b35',
-    background: 'rgba(255,107,53,0.15)',
-    color: '#ff6b35',
-  },
-  voteIcon: {
-    fontSize: 18,
-  },
-  ctaBtn: {
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: 8,
-    padding: '14px 24px',
-    background: 'linear-gradient(135deg, #00ff88, #00d4ff)',
-    borderRadius: 14,
-    color: '#000',
-    fontSize: 15,
-    fontWeight: 800,
-    textDecoration: 'none',
-    transition: 'all 0.2s',
-  },
-  ctaArrow: {
-    fontSize: 18,
-  },
-
-  // Navigation
-  navArrow: {
-    position: 'absolute',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    width: 48,
-    height: 48,
-    border: '1px solid #333',
-    borderRadius: '50%',
-    background: 'rgba(0,0,0,0.8)',
-    color: '#fff',
-    fontSize: 20,
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    transition: 'all 0.2s',
-    zIndex: 10,
-  },
-  navPrev: {
-    left: -8,
-  },
-  navNext: {
-    right: -8,
-  },
-  navDisabled: {
-    opacity: 0.3,
-    cursor: 'not-allowed',
-  },
-
-  // Dots
-  dots: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 16,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    background: '#333',
-    borderRadius: '50%',
-    cursor: 'pointer',
-    transition: 'all 0.2s',
-  },
-  dotActive: {
-    width: 24,
-    borderRadius: 4,
-    background: '#00ff88',
-  },
-  dotHot: {
-    background: '#ff6b35',
-  },
-  dotMore: {
-    fontSize: 10,
-    color: '#666',
-    marginLeft: 4,
-  },
-
-  // Grid mode
-  gridContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(2, 1fr)',
-    gap: 12,
-    padding: 16,
-    maxWidth: 600,
-    margin: '0 auto',
-  },
-  miniCard: {
-    background: '#111',
-    borderRadius: 16,
-    overflow: 'hidden',
-    border: '1px solid #222',
-  },
-  miniImage: {
-    position: 'relative',
-    aspectRatio: '1',
-    background: '#0a0a0a',
-  },
-  miniImg: {
-    width: '100%',
-    height: '100%',
-    objectFit: 'cover',
-  },
-  miniDiscount: {
-    position: 'absolute',
-    top: 8,
-    right: 8,
-    padding: '4px 8px',
-    background: '#30d158',
-    borderRadius: 6,
-    fontSize: 12,
-    fontWeight: 700,
-    color: '#fff',
-  },
-  miniHot: {
-    position: 'absolute',
-    top: 8,
-    left: 8,
-    fontSize: 16,
-  },
-  miniContent: {
-    padding: 12,
-  },
-  miniBrand: {
-    fontSize: 9,
-    color: '#00ff88',
-    fontWeight: 600,
-    letterSpacing: 1,
-  },
-  miniTitle: {
-    fontSize: 13,
-    fontWeight: 700,
-    marginTop: 2,
-    lineHeight: 1.2,
-    display: '-webkit-box',
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: 'vertical',
-    overflow: 'hidden',
-  },
-  miniPrice: {
-    fontSize: 16,
-    fontWeight: 800,
-    marginTop: 8,
-  },
-  miniCta: {
-    display: 'block',
-    marginTop: 8,
-    padding: '8px',
-    background: 'linear-gradient(135deg, #00ff88, #00d4ff)',
-    borderRadius: 8,
-    color: '#000',
-    fontSize: 12,
-    fontWeight: 700,
-    textDecoration: 'none',
-    textAlign: 'center',
-  },
-
-  // Toast
-  toast: {
-    position: 'fixed',
-    bottom: 100,
-    left: '50%',
-    transform: 'translateX(-50%)',
-    padding: '12px 24px',
-    background: '#111',
-    border: '1px solid #00ff88',
-    borderRadius: 12,
-    fontSize: 14,
-    fontWeight: 600,
-    color: '#00ff88',
-    zIndex: 1000,
-    animation: 'slideUp 0.3s ease',
-  },
-
-  // Footer
-  footer: {
-    textAlign: 'center',
-    padding: '40px 16px',
-    borderTop: '1px solid #1a1a1a',
-    marginTop: 40,
-  },
-  footerDisclaimer: {
-    fontSize: 11,
-    color: '#666',
-    marginTop: 8,
-  },
-};
-
-// Add keyframes
-const styleSheet = document.createElement('style');
-styleSheet.textContent = `
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-  @keyframes slideUp {
-    from { transform: translateX(-50%) translateY(20px); opacity: 0; }
-    to { transform: translateX(-50%) translateY(0); opacity: 1; }
-  }
-  *::-webkit-scrollbar { display: none; }
-  * { scrollbar-width: none; }
-`;
-document.head.appendChild(styleSheet);
